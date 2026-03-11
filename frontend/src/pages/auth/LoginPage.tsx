@@ -57,9 +57,44 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 p-4">
+  /* ── shared input style ── */
+  const inputBase: React.CSSProperties = {
+    background: 'rgba(255, 255, 255, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    borderRadius: '14px',
+    color: 'rgba(255, 255, 255, 0.9)',
+    height: '52px',
+    padding: '0 16px 0 42px',
+    fontSize: '15px',
+    width: '100%',
+    outline: 'none',
+    boxSizing: 'border-box',
+    transition: 'border-color 0.2s, box-shadow 0.2s, background 0.2s',
+  };
 
+  const inputError: React.CSSProperties = {
+    ...inputBase,
+    borderColor: '#f87171',
+    background: 'rgba(248, 113, 113, 0.08)',
+  };
+
+  return (
+    /* ── 1. Wrapper / background ── */
+    <div
+      style={{
+        background: `
+          radial-gradient(ellipse at 20% 50%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 20%, rgba(37, 99, 235, 0.2) 0%, transparent 50%),
+          #0c1220
+        `,
+        minHeight: '100dvh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
       {/* ── Animated background blobs ── */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <div
@@ -75,69 +110,127 @@ export default function LoginPage() {
         <div
           className="absolute inset-0 opacity-[0.04]"
           style={{
-            backgroundImage:
-              'radial-gradient(circle, #fff 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
             backgroundSize: '28px 28px',
           }}
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-[420px]">
+      {/* ── 7. Card wrapper: max-width 400px, centered ── */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          width: 'calc(100% - 32px)',
+          maxWidth: '400px',
+          margin: 'auto',
+        }}
+      >
 
-        {/* Pre-card label */}
-        <div className="animate-fade-in mb-7 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-400/30 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-100 backdrop-blur-sm">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-300" />
+        {/* ── 6. Badge OUTSIDE and ABOVE the card ── */}
+        <div className="animate-fade-in" style={{ marginBottom: '16px', textAlign: 'center' }}>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '999px',
+              padding: '6px 14px',
+              fontSize: '11px',
+              letterSpacing: '0.1em',
+              color: 'rgba(255,255,255,0.6)',
+            }}
+          >
+            <span style={{ display: 'inline-block', height: '6px', width: '6px', borderRadius: '50%', background: 'rgba(147,197,253,0.8)' }} />
             Sistema de Gestion
           </span>
         </div>
 
-        {/* ── Card ── */}
-        <div className="animate-fade-in-up rounded-2xl bg-white p-8 shadow-2xl shadow-blue-900/50 ring-1 ring-white/20">
+        {/* ── 1. Card – glassmorphism ── */}
+        <div
+          className="animate-fade-in-up"
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(32px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+            border: '1px solid rgba(255, 255, 255, 0.10)',
+            borderRadius: '28px',
+            boxShadow: '0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
+            padding: '40px 28px',
+          }}
+        >
 
-          {/* Logo / Header */}
-          <div className="mb-8 flex flex-col items-center text-center">
-            <div className="animate-float animate-pulse-glow mb-5 flex h-[72px] w-[72px] items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-xl shadow-blue-500/40">
+          {/* ── Logo / Header ── */}
+          <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+            {/* ── 5. Icon container ── */}
+            <div
+              className="animate-float animate-pulse-glow"
+              style={{
+                width: '72px',
+                height: '72px',
+                background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
+                borderRadius: '20px',
+                boxShadow: '0 0 0 1px rgba(255,255,255,0.1), 0 8px 32px rgba(37,99,235,0.4)',
+                marginBottom: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Banknote className="h-9 w-9 text-white" strokeWidth={1.75} />
             </div>
-            <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight text-gray-900">
+            <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight" style={{ color: 'rgba(255,255,255,0.95)' }}>
               Cobros Diarios
             </h1>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
               Ingresa tus credenciales para continuar
             </p>
           </div>
 
-          {/* ── Form ── */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          {/* ── 2. Form – gap-y-5 ── */}
+          <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} noValidate>
 
             {/* Email field */}
             <div className="animate-fade-in-up animation-delay-150">
               <label
                 htmlFor="email"
-                className="mb-1.5 block text-sm font-semibold text-gray-700"
+                style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.6)' }}
               >
                 Correo electronico
               </label>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)', pointerEvents: 'none' }}>
                   <Mail size={16} />
                 </span>
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="correo@ejemplo.com"
-                  className={`input-field w-full rounded-xl border pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none focus:ring-2 ${
-                    errors.email
-                      ? 'border-red-300 bg-red-50 focus:ring-red-400/40 focus:border-red-400'
-                      : 'border-gray-200 bg-gray-50 hover:border-gray-300 focus:ring-blue-500/30 focus:border-blue-500 focus:bg-white'
-                  }`}
-                  {...register('email')}
-                />
+                {(() => {
+                  const { onBlur: rhfBlurEmail, ...emailRest } = register('email');
+                  return (
+                    <input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="correo@ejemplo.com"
+                      style={errors.email ? { ...inputError, paddingLeft: '42px' } : inputBase}
+                      onFocus={e => {
+                        e.currentTarget.style.borderColor = '#3b82f6';
+                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.11)';
+                      }}
+                      onBlur={e => {
+                        e.currentTarget.style.borderColor = errors.email ? '#f87171' : 'rgba(255, 255, 255, 0.12)';
+                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.background = errors.email ? 'rgba(248, 113, 113, 0.08)' : 'rgba(255, 255, 255, 0.08)';
+                        rhfBlurEmail(e);
+                      }}
+                      {...emailRest}
+                    />
+                  );
+                })()}
               </div>
               {errors.email && (
-                <p className="animate-fade-in mt-1.5 flex items-center gap-1 text-xs font-medium text-red-600">
+                <p className="animate-fade-in mt-1.5 flex items-center gap-1 text-xs font-medium" style={{ color: '#f87171' }}>
                   <span className="text-sm">⚠</span> {errors.email.message}
                 </p>
               )}
@@ -145,34 +238,46 @@ export default function LoginPage() {
 
             {/* Password field */}
             <div className="animate-fade-in-up animation-delay-300">
-              <div className="mb-1.5 flex items-center justify-between">
+              <div style={{ marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <label
                   htmlFor="password"
-                  className="text-sm font-semibold text-gray-700"
+                  style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.6)' }}
                 >
                   Contrasena
                 </label>
               </div>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)', pointerEvents: 'none' }}>
                   <Lock size={16} />
                 </span>
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  className={`input-field w-full rounded-xl border pl-10 pr-12 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none focus:ring-2 ${
-                    errors.password
-                      ? 'border-red-300 bg-red-50 focus:ring-red-400/40 focus:border-red-400'
-                      : 'border-gray-200 bg-gray-50 hover:border-gray-300 focus:ring-blue-500/30 focus:border-blue-500 focus:bg-white'
-                  }`}
-                  {...register('password')}
-                />
+                {(() => {
+                  const { onBlur: rhfBlurPassword, ...passwordRest } = register('password');
+                  return (
+                    <input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      placeholder="••••••••"
+                      style={errors.password ? { ...inputError, paddingLeft: '42px', paddingRight: '48px' } : { ...inputBase, paddingRight: '48px' }}
+                      onFocus={e => {
+                        e.currentTarget.style.borderColor = '#3b82f6';
+                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.11)';
+                      }}
+                      onBlur={e => {
+                        e.currentTarget.style.borderColor = errors.password ? '#f87171' : 'rgba(255, 255, 255, 0.12)';
+                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.background = errors.password ? 'rgba(248, 113, 113, 0.08)' : 'rgba(255, 255, 255, 0.08)';
+                        rhfBlurPassword(e);
+                      }}
+                      {...passwordRest}
+                    />
+                  );
+                })()}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-lg p-1 text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-600 active:scale-90"
+                  style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', padding: '4px', color: 'rgba(255,255,255,0.35)', background: 'none', border: 'none', cursor: 'pointer', borderRadius: '8px', transition: 'color 0.2s' }}
                   tabIndex={-1}
                   aria-label={showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'}
                 >
@@ -180,18 +285,41 @@ export default function LoginPage() {
                 </button>
               </div>
               {errors.password && (
-                <p className="animate-fade-in mt-1.5 flex items-center gap-1 text-xs font-medium text-red-600">
+                <p className="animate-fade-in mt-1.5 flex items-center gap-1 text-xs font-medium" style={{ color: '#f87171' }}>
                   <span className="text-sm">⚠</span> {errors.password.message}
                 </p>
               )}
             </div>
 
-            {/* Submit button */}
-            <div className="animate-fade-in-up animation-delay-400 pt-2">
+            {/* ── 4. Submit button ── */}
+            <div className="animate-fade-in-up animation-delay-400">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn-primary group flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/35 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="group flex w-full items-center justify-center gap-2.5 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                style={{
+                  height: '52px',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                  boxShadow: '0 4px 20px rgba(37, 99, 235, 0.45)',
+                  fontWeight: 600,
+                  fontSize: '15px',
+                  marginTop: '8px',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  transition: 'box-shadow 0.2s, transform 0.2s',
+                }}
+                onMouseEnter={e => {
+                  if (!isSubmitting) {
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 28px rgba(37, 99, 235, 0.65)';
+                    (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(37, 99, 235, 0.45)';
+                  (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
+                }}
               >
                 {isSubmitting ? (
                   <>
@@ -212,26 +340,34 @@ export default function LoginPage() {
           </form>
 
           {/* Divider */}
-          <div className="animate-fade-in-up animation-delay-500 my-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-gray-100" />
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+          <div className="animate-fade-in-up animation-delay-500" style={{ margin: '24px 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ height: '1px', flex: 1, background: 'rgba(255,255,255,0.08)' }} />
+            <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.25)' }}>
               Seguridad
             </span>
-            <div className="h-px flex-1 bg-gray-100" />
+            <div style={{ height: '1px', flex: 1, background: 'rgba(255,255,255,0.08)' }} />
           </div>
 
           {/* Security badge */}
-          <div className="animate-fade-in-up animation-delay-600 flex items-center justify-center gap-2 rounded-xl bg-green-50 px-4 py-2.5 ring-1 ring-green-100">
-            <ShieldCheck size={15} className="text-green-600 shrink-0" />
-            <span className="text-xs font-medium text-green-700">
+          <div
+            className="animate-fade-in-up animation-delay-600 flex items-center justify-center gap-2"
+            style={{
+              borderRadius: '12px',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              padding: '10px 16px',
+            }}
+          >
+            <ShieldCheck size={15} className="shrink-0" style={{ color: '#4ade80' }} />
+            <span style={{ fontSize: '12px', fontWeight: 500, color: 'rgba(255,255,255,0.45)' }}>
               Conexion protegida con encriptacion SSL
             </span>
           </div>
         </div>
 
         {/* Footer below card */}
-        <div className="animate-fade-in animation-delay-700 mt-6 text-center">
-          <p className="text-xs text-blue-200/60">
+        <div className="animate-fade-in animation-delay-700" style={{ marginTop: '24px', textAlign: 'center' }}>
+          <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.25)' }}>
             &copy; {new Date().getFullYear()} Cobros Diarios &middot; Todos los derechos reservados
           </p>
         </div>
