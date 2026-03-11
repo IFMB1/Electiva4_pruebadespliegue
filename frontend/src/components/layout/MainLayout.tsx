@@ -4,7 +4,7 @@ import Topbar from './Topbar';
 
 export default function MainLayout() {
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden" style={{ background: '#0c1220' }}>
       {/* Sidebar */}
       <Sidebar />
 

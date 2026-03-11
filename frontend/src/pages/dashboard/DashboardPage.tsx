@@ -32,18 +32,31 @@ function formatDateTime(value?: string | null) {
 }
 
 function shiftStatusLabel(status: DashboardCollectorStatus['shiftStatus']) {
-  if (status === 'OPEN')        return 'Caja abierta';
-  if (status === 'CLOSED')      return 'Caja cerrada';
+  if (status === 'OPEN') return 'Caja abierta';
+  if (status === 'CLOSED') return 'Caja cerrada';
   if (status === 'AUTO_CLOSED') return 'Auto cerrada';
   return 'Sin apertura';
 }
 
-function shiftStatusClass(status: DashboardCollectorStatus['shiftStatus']) {
-  if (status === 'OPEN')        return 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200';
-  if (status === 'CLOSED')      return 'bg-blue-100 text-blue-700 ring-1 ring-blue-200';
-  if (status === 'AUTO_CLOSED') return 'bg-amber-100 text-amber-700 ring-1 ring-amber-200';
-  return 'bg-gray-100 text-gray-600 ring-1 ring-gray-200';
+function shiftStatusStyle(status: DashboardCollectorStatus['shiftStatus']): React.CSSProperties {
+  if (status === 'OPEN') return { background: 'rgba(16,185,129,0.12)', color: '#34d399', border: '1px solid rgba(16,185,129,0.25)' };
+  if (status === 'CLOSED') return { background: 'rgba(59,130,246,0.12)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.25)' };
+  if (status === 'AUTO_CLOSED') return { background: 'rgba(245,158,11,0.12)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.25)' };
+  return { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' };
 }
+
+/* ── shared section card style ── */
+const sectionCard: React.CSSProperties = {
+  background: 'rgba(255, 255, 255, 0.03)',
+  border: '1px solid rgba(255, 255, 255, 0.07)',
+  borderRadius: '20px',
+  overflow: 'hidden',
+};
+
+const sectionHeader: React.CSSProperties = {
+  borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+  padding: '16px',
+};
 
 export default function DashboardPage() {
   const overviewQuery = useQuery({
@@ -60,10 +73,10 @@ export default function DashboardPage() {
 
   if (overviewQuery.isLoading) {
     return (
-      <div className="flex h-[70vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-gray-500">
-          <Loader2 size={28} className="animate-spin text-blue-500" />
-          <p className="text-sm font-medium">Cargando dashboard...</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70vh' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.4)' }}>
+          <Loader2 size={28} className="animate-spin" style={{ color: '#3b82f6' }} />
+          <p style={{ fontSize: '14px', fontWeight: 500 }}>Cargando dashboard...</p>
         </div>
       </div>
     );
@@ -71,9 +84,9 @@ export default function DashboardPage() {
 
   if (!overview) {
     return (
-      <div className="p-6">
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">
-          <p className="font-semibold">No se pudo cargar el dashboard.</p>
+      <div style={{ padding: '24px' }}>
+        <div style={{ borderRadius: '16px', border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.08)', padding: '24px', color: '#f87171' }}>
+          <p style={{ fontWeight: 600 }}>No se pudo cargar el dashboard.</p>
         </div>
       </div>
     );
@@ -82,25 +95,52 @@ export default function DashboardPage() {
   const inactiveCollectors = overview.collectors.filter((c) => c.isInactive);
 
   return (
-    <div className="p-6 space-y-6">
-
-      {/* ── Page header ── */}
-      <div className="flex flex-col gap-1.5 md:flex-row md:items-end md:justify-between">
+    /* ── 1. Page background ── */
+    <div
+      style={{
+        background: `
+          radial-gradient(ellipse at 10% 0%, rgba(37,99,235,0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 90% 80%, rgba(124,58,237,0.06) 0%, transparent 50%),
+          #0c1220
+        `,
+        minHeight: '100dvh',
+        padding: '20px 16px 32px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px',
+      }}
+    >
+      {/* ── 2. Page header ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }} className="md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
+          <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'white', margin: 0 }}>
             Dashboard General
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p style={{ marginTop: '4px', fontSize: '13px', color: 'rgba(255,255,255,0.45)', margin: '4px 0 0' }}>
             Datos en tiempo real &mdash; {overview.businessDate}
           </p>
         </div>
-        <div className="flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-500 self-start md:self-auto">
-          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'rgba(34,197,94,0.1)',
+            border: '1px solid rgba(34,197,94,0.2)',
+            borderRadius: '999px',
+            padding: '3px 10px',
+            fontSize: '11px',
+            color: '#4ade80',
+            alignSelf: 'flex-start',
+          }}
+          className="md:self-auto"
+        >
+          <span style={{ display: 'inline-block', height: '6px', width: '6px', borderRadius: '50%', background: '#4ade80' }} className="animate-pulse" />
           Actualizado {formatDateTime(overview.generatedAt)}
         </div>
       </div>
 
-      {/* ── KPI cards ── */}
+      {/* ── 3. KPI cards ── */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard
           title="Cobrado hoy"
@@ -131,17 +171,17 @@ export default function DashboardPage() {
 
       {/* ── Inactive collectors warning ── */}
       {inactiveCollectors.length > 0 && (
-        <div className="flex gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
-          <AlertTriangle size={18} className="mt-0.5 shrink-0 text-red-500" />
+        <div style={{ display: 'flex', gap: '12px', borderRadius: '16px', border: '1px solid rgba(239,68,68,0.25)', background: 'rgba(239,68,68,0.08)', padding: '16px' }}>
+          <AlertTriangle size={18} style={{ marginTop: '2px', flexShrink: 0, color: '#f87171' }} />
           <div>
-            <p className="text-sm font-bold text-red-700">
+            <p style={{ fontSize: '14px', fontWeight: 700, color: '#f87171' }}>
               Cobradores con mas de {overview.inactivityThresholdHours}h sin actividad
             </p>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {inactiveCollectors.map((c) => (
                 <span
                   key={c.id}
-                  className="inline-flex items-center rounded-full bg-red-100 px-3 py-0.5 text-xs font-semibold text-red-700 ring-1 ring-red-200"
+                  style={{ display: 'inline-flex', alignItems: 'center', borderRadius: '999px', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', padding: '2px 12px', fontSize: '12px', fontWeight: 600, color: '#f87171' }}
                 >
                   {c.name} ({c.hoursWithoutActivity}h)
                 </span>
@@ -154,72 +194,71 @@ export default function DashboardPage() {
       {/* ── Main grid ── */}
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
 
-        {/* Collectors table */}
-        <section className="xl:col-span-2 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-          <div className="border-b border-gray-100 px-5 py-4">
-            <h2 className="text-[15px] font-bold text-gray-800">Estado de cobradores</h2>
-            <p className="mt-0.5 text-xs text-gray-400">{overview.collectors.length} cobradores registrados</p>
+        {/* ── 4 & 5. Collectors table ── */}
+        <section style={{ ...sectionCard }} className="xl:col-span-2">
+          <div style={sectionHeader}>
+            <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'rgba(255,255,255,0.85)', margin: 0 }}>Estado de cobradores</h2>
+            <p style={{ marginTop: '2px', fontSize: '12px', color: 'rgba(255,255,255,0.35)', margin: '2px 0 0' }}>{overview.collectors.length} cobradores registrados</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/60">
-                  <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-500">Cobrador</th>
-                  <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-500">Cobrado</th>
-                  <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-500">Gastos</th>
-                  <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-500">Neto</th>
-                  <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-500">Ult. movimiento</th>
-                  <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-500">Caja</th>
-                  <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-500">Estado</th>
+                <tr>
+                  {['Cobrador', 'Cobrado', 'Gastos', 'Neto', 'Ult. movimiento', 'Caja', 'Estado'].map((h) => (
+                    <th
+                      key={h}
+                      style={{ padding: '8px 12px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.35)', background: 'rgba(255,255,255,0.04)', whiteSpace: 'nowrap' }}
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody>
                 {overview.collectors.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-5 py-12 text-center">
-                      <p className="text-sm text-gray-400">No hay cobradores registrados.</p>
+                    <td colSpan={7} style={{ padding: '24px 0', textAlign: 'center', color: 'rgba(255,255,255,0.3)', fontSize: '13px' }}>
+                      No hay cobradores registrados.
                     </td>
                   </tr>
                 ) : (
                   overview.collectors.map((collector) => (
                     <tr
                       key={collector.id}
-                      className={`table-row-hover transition-colors ${
-                        collector.isInactive
-                          ? 'bg-red-50/40 hover:bg-red-50'
-                          : 'hover:bg-gray-50/60'
-                      }`}
+                      style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <td className="px-5 py-3.5">
-                        <p className="font-semibold text-gray-900">{collector.name}</p>
-                        <p className="text-xs text-gray-400">{collector.phone}</p>
+                      <td style={{ padding: '12px' }}>
+                        <p style={{ fontWeight: 600, color: 'rgba(255,255,255,0.85)', margin: 0 }}>{collector.name}</p>
+                        <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', margin: 0 }}>{collector.phone}</p>
                       </td>
-                      <td className="px-5 py-3.5 font-medium text-emerald-600">
+                      <td style={{ padding: '12px', fontWeight: 500, color: '#34d399', whiteSpace: 'nowrap' }}>
                         {formatCurrency(collector.totalCollectedToday)}
                       </td>
-                      <td className="px-5 py-3.5 text-red-600">
+                      <td style={{ padding: '12px', color: '#f87171', whiteSpace: 'nowrap' }}>
                         {formatCurrency(collector.totalExpensesToday)}
                       </td>
-                      <td className="px-5 py-3.5 font-bold text-gray-900">
+                      <td style={{ padding: '12px', fontWeight: 700, color: 'rgba(255,255,255,0.85)', whiteSpace: 'nowrap' }}>
                         {formatCurrency(collector.netToday)}
                       </td>
-                      <td className="px-5 py-3.5 text-gray-600">
+                      <td style={{ padding: '12px', color: 'rgba(255,255,255,0.55)', whiteSpace: 'nowrap' }}>
                         {formatDateTime(collector.lastMovementAt)}
                       </td>
-                      <td className="px-5 py-3.5">
-                        <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${shiftStatusClass(collector.shiftStatus)}`}>
+                      <td style={{ padding: '12px' }}>
+                        <span style={{ display: 'inline-flex', borderRadius: '999px', padding: '2px 10px', fontSize: '11px', fontWeight: 600, ...shiftStatusStyle(collector.shiftStatus) }}>
                           {shiftStatusLabel(collector.shiftStatus)}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5">
+                      <td style={{ padding: '12px' }}>
                         {collector.isInactive ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-700 ring-1 ring-red-200">
-                            <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', borderRadius: '999px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', padding: '2px 10px', fontSize: '11px', fontWeight: 600, color: '#f87171', whiteSpace: 'nowrap' }}>
+                            <span style={{ height: '6px', width: '6px', borderRadius: '50%', background: '#f87171' }} />
                             Inactivo ({collector.hoursWithoutActivity}h)
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', borderRadius: '999px', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', padding: '2px 10px', fontSize: '11px', fontWeight: 600, color: '#34d399' }}>
+                            <span style={{ height: '6px', width: '6px', borderRadius: '50%', background: '#34d399' }} />
                             Activo
                           </span>
                         )}
@@ -232,37 +271,39 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Alerts panel */}
-        <section className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-          <div className="border-b border-gray-100 px-5 py-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[15px] font-bold text-gray-800">Notificaciones</h2>
+        {/* ── 6. Alerts panel ── */}
+        <section style={{ ...sectionCard }}>
+          <div style={sectionHeader}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'rgba(255,255,255,0.85)', margin: 0 }}>Notificaciones</h2>
               {overview.unreadInactivityAlerts.total > 0 && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                <span style={{ display: 'flex', height: '20px', width: '20px', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: '#ef4444', fontSize: '10px', fontWeight: 700, color: 'white' }}>
                   {overview.unreadInactivityAlerts.total}
                 </span>
               )}
             </div>
-            <p className="mt-0.5 text-xs text-gray-400">Alertas de inactividad sin leer</p>
+            <p style={{ marginTop: '2px', fontSize: '12px', color: 'rgba(255,255,255,0.35)', margin: '2px 0 0' }}>Alertas de inactividad sin leer</p>
           </div>
-          <div className="max-h-[480px] overflow-y-auto">
+          <div style={{ maxHeight: '480px', overflowY: 'auto' }}>
             {overview.unreadInactivityAlerts.items.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-2 px-5 py-12">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
-                  <AlertTriangle size={16} className="text-gray-400" />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '24px 20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }}>
+                  <AlertTriangle size={22} style={{ color: 'rgba(255,255,255,0.2)' }} />
                 </div>
-                <p className="text-sm text-gray-400">Sin alertas por ahora</p>
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.3)' }}>Sin alertas por ahora</p>
               </div>
             ) : (
-              <ul className="divide-y divide-gray-50">
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
                 {overview.unreadInactivityAlerts.items.map((item) => (
                   <li
                     key={item.id}
-                    className="px-5 py-4 transition-colors hover:bg-gray-50/50"
+                    style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s', cursor: 'default' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
-                    <p className="text-sm font-semibold text-gray-800">{item.title}</p>
-                    <p className="mt-0.5 text-sm text-gray-500">{item.message}</p>
-                    <p className="mt-2 flex items-center gap-1 text-[11px] text-gray-400">
+                    <p style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: 0 }}>{item.title}</p>
+                    <p style={{ marginTop: '2px', fontSize: '13px', color: 'rgba(255,255,255,0.45)', margin: '2px 0 0' }}>{item.message}</p>
+                    <p style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'rgba(255,255,255,0.3)', margin: '8px 0 0' }}>
                       <Clock3 size={11} />
                       {formatDateTime(item.createdAt)}
                     </p>
@@ -278,42 +319,55 @@ export default function DashboardPage() {
 }
 
 /* ── KPI Card component ── */
-const toneConfig = {
-  green:  { icon: 'bg-emerald-100 text-emerald-600',  value: 'text-emerald-700',  border: 'border-emerald-100' },
-  blue:   { icon: 'bg-blue-100 text-blue-600',        value: 'text-blue-700',     border: 'border-blue-100'   },
-  indigo: { icon: 'bg-indigo-100 text-indigo-600',    value: 'text-indigo-700',   border: 'border-indigo-100' },
-  red:    { icon: 'bg-red-100 text-red-600',          value: 'text-red-700',      border: 'border-red-100'    },
-  gray:   { icon: 'bg-gray-100 text-gray-500',        value: 'text-gray-700',     border: 'border-gray-100'   },
-};
-
 function KpiCard({
   title,
   value,
   icon,
-  tone,
+  tone: _tone,
   trend,
 }: {
   title: string;
   value: string;
   icon: React.ReactNode;
-  tone: keyof typeof toneConfig;
+  tone: 'green' | 'blue' | 'indigo' | 'red' | 'gray';
   trend?: 'up' | 'down';
 }) {
-  const cfg = toneConfig[tone];
-
   return (
-    <div className={`card-hover rounded-2xl border bg-white p-5 shadow-sm ${cfg.border}`}>
-      <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs font-bold uppercase tracking-wider text-gray-500">{title}</p>
-        <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${cfg.icon}`}>
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.04)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '20px',
+        padding: '16px',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        transition: 'all 0.2s cubic-bezier(0.16,1,0.3,1)',
+        cursor: 'default',
+      }}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.background = 'rgba(255,255,255,0.07)';
+        el.style.borderColor = 'rgba(255,255,255,0.12)';
+        el.style.transform = 'translateY(-2px)';
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.background = 'rgba(255,255,255,0.04)';
+        el.style.borderColor = 'rgba(255,255,255,0.08)';
+        el.style.transform = 'translateY(0)';
+      }}
+    >
+      <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', margin: 0 }}>{title}</p>
+        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px', background: 'rgba(37,99,235,0.12)', padding: '8px', color: '#60a5fa' }}>
           {icon}
         </span>
       </div>
-      <div className="flex items-end gap-2">
-        <p className={`text-xl font-extrabold ${cfg.value}`}>{value}</p>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
+        <p style={{ fontSize: '28px', fontWeight: 700, color: 'white', margin: 0, lineHeight: 1 }}>{value}</p>
         {trend === 'up' && (
-          <span className="mb-0.5 flex items-center gap-0.5 text-xs font-semibold text-emerald-600">
-            <TrendingUp size={13} />
+          <span style={{ marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '2px', background: 'rgba(34,197,94,0.1)', color: '#4ade80', borderRadius: '999px', padding: '2px 8px', fontSize: '11px', fontWeight: 600 }}>
+            <TrendingUp size={11} />
             Hoy
           </span>
         )}
