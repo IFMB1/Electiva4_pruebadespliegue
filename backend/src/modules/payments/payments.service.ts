@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../../config/database';
 import { BadRequestError, NotFoundError } from '../../utils/errors';
 import { ensureOpenShiftForToday } from '../collector/collector.shared';
+import { refreshLoanDelinquency } from '../loans/delinquency.service';
 import type { CreatePaymentInput } from './payments.validation';
 
 function toNumber(value: Prisma.Decimal | number | null | undefined) {
@@ -20,7 +21,7 @@ export async function createForCollector(
   const shift = await ensureOpenShiftForToday(collectorId);
   const amount = roundMoney(payload.amount);
 
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const loan = await tx.loan.findFirst({
       where: {
         id: payload.loanId,
@@ -165,4 +166,8 @@ export async function createForCollector(
       timestamp: now.toISOString(),
     };
   });
+
+  await refreshLoanDelinquency(payload.loanId);
+
+  return result;
 }

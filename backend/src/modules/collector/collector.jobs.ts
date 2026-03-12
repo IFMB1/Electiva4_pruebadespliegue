@@ -3,6 +3,7 @@ import {
   autoCloseExpiredShifts,
   processCollectorInactivityAlerts,
 } from './collector.service';
+import { refreshAllOpenLoansDelinquency } from '../loans/delinquency.service';
 import { BUSINESS_TIMEZONE } from './collector.shared';
 import { logger } from '../../utils/logger';
 
@@ -10,6 +11,7 @@ let jobTimer: NodeJS.Timeout | null = null;
 let lastInactivitySlotKey: string | null = null;
 let lastAutoCloseDateKey: string | null = null;
 let lastStaleRecoveryDateKey: string | null = null;
+let lastDelinquencySlotKey: string | null = null;
 
 function getBusinessTimeParts(reference = new Date()) {
   const formatter = new Intl.DateTimeFormat('en-CA', {
@@ -69,6 +71,19 @@ async function runCollectorJobsTick() {
     }
   }
 
+  // Delinquency refresh every hour at minute 10.
+  const shouldRefreshDelinquency = businessTime.minute === 10;
+  if (shouldRefreshDelinquency) {
+    const slotKey = `${businessTime.dateKey}T${String(businessTime.hour).padStart(2, '0')}:10`;
+    if (slotKey !== lastDelinquencySlotKey) {
+      const refreshResult = await refreshAllOpenLoansDelinquency();
+      if (refreshResult.processed > 0 || refreshResult.failed > 0) {
+        logger.info('Delinquency refresh tick executed', refreshResult);
+      }
+      lastDelinquencySlotKey = slotKey;
+    }
+  }
+
   // Automatic close exactly at 23:59.
   const shouldAutoCloseNow = businessTime.hour === 23 && businessTime.minute === 59;
   if (shouldAutoCloseNow && lastAutoCloseDateKey !== businessTime.dateKey) {
@@ -82,6 +97,10 @@ export function startCollectorJobs() {
 
   autoCloseExpiredShifts().catch((error) => {
     logger.error('Collector jobs startup recovery failed', { error });
+  });
+
+  refreshAllOpenLoansDelinquency().catch((error) => {
+    logger.error('Delinquency startup refresh failed', { error });
   });
 
   runCollectorJobsTick().catch((error) => {
