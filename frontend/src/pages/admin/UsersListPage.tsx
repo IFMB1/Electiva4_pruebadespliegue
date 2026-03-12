@@ -164,69 +164,238 @@ export default function UsersListPage() {
     setPage(1);
   };
 
+  const thStyle: React.CSSProperties = {
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    padding: '14px 20px',
+    whiteSpace: 'nowrap',
+  };
+
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
-            <UserCog className="text-blue-600" size={28} />
-            Gestion de Usuarios
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Administre usuarios, estado y contrasenas ({total} total)
-          </p>
-        </div>
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700"
+    <div
+      className="mx-auto w-full max-w-7xl"
+      style={{
+        background:
+          'radial-gradient(ellipse at 10% 0%, rgba(37,99,235,0.1) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(124,58,237,0.08) 0%, transparent 50%), #0c1220',
+        minHeight: '100dvh',
+        padding: '32px 28px 48px',
+      }}
+    >
+      {/* ── Encabezado ── */}
+      <div style={{ marginBottom: 28 }}>
+        <h1
+          className="flex items-center gap-3"
+          style={{ color: 'white', fontWeight: 800, fontSize: 32, letterSpacing: '-0.02em', margin: 0 }}
         >
-          <Plus size={18} />
-          Nuevo usuario
-        </button>
+          <UserCog color="#3b82f6" size={36} />
+          Gestion de Usuarios
+        </h1>
+        <p
+          style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 400, fontSize: 16, marginTop: 6 }}
+        >
+          Administre usuarios, estado y contrasenas ({total} total)
+        </p>
       </div>
 
-      <div className="mb-4">
-        <div className="relative max-w-md">
-          <Search
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-          <input
-            type="text"
-            placeholder="Buscar por nombre, email o telefono..."
-            value={search}
-            onChange={(event) => handleSearchChange(event.target.value)}
-            className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-          />
+      {/* ── Barra de búsqueda + botón ── */}
+      <div
+        style={{
+          marginBottom: 20,
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 20,
+          padding: '16px 20px',
+        }}
+      >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-lg">
+            <Search
+              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2"
+              style={{ color: 'rgba(255,255,255,0.35)' }}
+            />
+            <input
+              type="text"
+              placeholder="Buscar por nombre, email o telefono..."
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full outline-none placeholder:text-white/20"
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.09)',
+                borderRadius: 14,
+                color: 'rgba(255,255,255,0.9)',
+                fontSize: 14,
+                padding: '11px 16px 11px 44px',
+                transition: 'all 0.2s ease',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#3b82f6';
+                e.target.style.background = 'rgba(255,255,255,0.07)';
+                e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.12)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255,255,255,0.09)';
+                e.target.style.background = 'rgba(255,255,255,0.05)';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+          </div>
+
+          <button
+            onClick={openCreateModal}
+            className="flex items-center justify-center gap-2 whitespace-nowrap"
+            style={{
+              background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+              border: 'none',
+              borderRadius: 14,
+              color: 'white',
+              fontSize: 14,
+              fontWeight: 700,
+              padding: '11px 22px',
+              cursor: 'pointer',
+              boxShadow: '0 6px 20px -4px rgba(37,99,235,0.5)',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 10px 28px -4px rgba(37,99,235,0.65)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 6px 20px -4px rgba(37,99,235,0.5)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <Plus size={18} />
+            Nuevo usuario
+          </button>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+      {/* ── Tabla / Cards ── */}
+      <div
+        style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 24,
+          overflow: 'hidden',
+          boxShadow: '0 20px 60px -12px rgba(0,0,0,0.5)',
+        }}
+      >
+        {/* Mobile: cards */}
+        <div className="flex flex-col gap-5 p-4 md:hidden">
+          {usersQuery.isLoading ? (
+            <div className="flex items-center justify-center gap-2 py-12" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              <Loader2 size={20} className="animate-spin" />
+              Cargando usuarios...
+            </div>
+          ) : users.length === 0 ? (
+            <p className="py-12 text-center" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              No se encontraron usuarios
+            </p>
+          ) : (
+            users.map((user) => (
+              <div
+                key={user.id}
+                style={{
+                  background: 'linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 20,
+                  padding: '20px',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                  <div>
+                    <p style={{ color: 'white', fontWeight: 800, fontSize: 17, letterSpacing: '-0.01em' }}>{user.name}</p>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, marginTop: 3 }}>{user.email}</p>
+                  </div>
+                  <span style={{
+                    background: user.isActive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+                    border: user.isActive ? '1px solid rgba(34,197,94,0.25)' : '1px solid rgba(239,68,68,0.25)',
+                    color: user.isActive ? '#4ade80' : '#f87171',
+                    borderRadius: 10, padding: '5px 12px',
+                    fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em',
+                  }}>
+                    {user.isActive ? 'Activo' : 'Inactivo'}
+                  </span>
+                </div>
+
+                <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 14, padding: '14px 16px', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Telefono</p>
+                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: 500 }}>{user.phone || '-'}</p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Rol</p>
+                    <span style={{
+                      background: 'rgba(37,99,235,0.15)', border: '1px solid rgba(59,130,246,0.2)',
+                      color: '#93c5fd', borderRadius: 8, padding: '3px 10px', fontSize: 11, fontWeight: 700,
+                    }}>
+                      {user.role?.name || 'Sin rol'}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 10 }}>
+                  <button onClick={() => openEditModal(user)} style={{
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 12, padding: '11px', color: 'white', fontSize: 13, fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer',
+                  }}>
+                    <Edit2 size={15} /> Editar
+                  </button>
+                  <button onClick={() => setResetPasswordUser(user)} style={{
+                    background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)',
+                    borderRadius: 12, padding: '11px', color: '#fbbf24', fontSize: 13, fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer',
+                  }}>
+                    <KeyRound size={15} /> Clave
+                  </button>
+                  <button onClick={() => toggleActiveMutation.mutate(user.id)} style={{
+                    background: user.isActive ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)',
+                    border: user.isActive ? '1px solid rgba(239,68,68,0.2)' : '1px solid rgba(34,197,94,0.2)',
+                    borderRadius: 12, padding: '11px 14px',
+                    color: user.isActive ? '#f87171' : '#4ade80',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {user.isActive ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop: tabla */}
+        <div className="hidden md:block">
+          <table className="w-full text-left text-sm" style={{ borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="px-6 py-3 font-semibold text-gray-600">Nombre</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Email</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Telefono</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Rol</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Estado</th>
-                <th className="px-6 py-3 text-right font-semibold text-gray-600">Acciones</th>
+              <tr style={{ background: 'rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                <th style={{ ...thStyle, width: '20%' }}>Nombre</th>
+                <th style={{ ...thStyle, width: '26%' }}>Email</th>
+                <th style={{ ...thStyle, width: '16%' }}>Telefono</th>
+                <th style={{ ...thStyle, width: '13%' }}>Rol</th>
+                <th style={{ ...thStyle, width: '13%' }}>Estado</th>
+                <th style={{ ...thStyle, width: '12%', textAlign: 'right' }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {usersQuery.isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center">
-                    <div className="flex items-center justify-center gap-2 text-gray-500">
-                      <Loader2 size={20} className="animate-spin" />
+                  <td colSpan={6} style={{ padding: '48px 20px', textAlign: 'center' }}>
+                    <div className="flex items-center justify-center gap-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                      <Loader2 size={18} className="animate-spin" />
                       Cargando usuarios...
                     </div>
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} style={{ padding: '48px 20px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>
                     No se encontraron usuarios
                   </td>
                 </tr>
@@ -234,53 +403,84 @@ export default function UsersListPage() {
                 users.map((user) => (
                   <tr
                     key={user.id}
-                    className="border-b border-gray-50 transition-colors hover:bg-gray-50"
+                    style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900">{user.name}</td>
-                    <td className="px-6 py-4 text-gray-600">{user.email}</td>
-                    <td className="px-6 py-4 text-gray-600">{user.phone || '-'}</td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                    <td style={{ padding: '16px 20px', color: 'white', fontWeight: 600, fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 0 }}>
+                      {user.name}
+                    </td>
+                    <td style={{ padding: '16px 20px', color: 'rgba(255,255,255,0.45)', fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 0 }}>
+                      {user.email}
+                    </td>
+                    <td style={{ padding: '16px 20px', color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>
+                      {user.phone || '-'}
+                    </td>
+                    <td style={{ padding: '16px 20px' }}>
+                      <span style={{
+                        background: 'rgba(37,99,235,0.12)', border: '1px solid rgba(59,130,246,0.2)',
+                        color: '#93c5fd', borderRadius: 999, padding: '3px 11px', fontSize: 11, fontWeight: 600,
+                        whiteSpace: 'nowrap',
+                      }}>
                         {user.role?.name || 'Sin rol'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          user.isActive
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-700'
-                        }`}
-                      >
+                    <td style={{ padding: '16px 20px' }}>
+                      <span style={{
+                        background: user.isActive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+                        border: user.isActive ? '1px solid rgba(34,197,94,0.25)' : '1px solid rgba(239,68,68,0.25)',
+                        color: user.isActive ? '#4ade80' : '#f87171',
+                        borderRadius: 999, padding: '3px 11px', fontSize: 11, fontWeight: 600,
+                        whiteSpace: 'nowrap',
+                      }}>
                         {user.isActive ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
+                    <td style={{ padding: '16px 20px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4 }}>
                         <button
                           onClick={() => openEditModal(user)}
-                          className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
                           title="Editar usuario"
+                          style={{
+                            background: 'transparent', border: 'none', borderRadius: 8,
+                            padding: '7px', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', transition: 'all 0.15s',
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(37,99,235,0.15)'; e.currentTarget.style.color = '#60a5fa'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; }}
                         >
-                          <Edit2 size={16} />
+                          <Edit2 size={15} />
                         </button>
                         <button
                           onClick={() => setResetPasswordUser(user)}
-                          className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
                           title="Restablecer contrasena"
+                          style={{
+                            background: 'transparent', border: 'none', borderRadius: 8,
+                            padding: '7px', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', transition: 'all 0.15s',
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(245,158,11,0.15)'; e.currentTarget.style.color = '#fbbf24'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; }}
                         >
-                          <KeyRound size={16} />
+                          <KeyRound size={15} />
                         </button>
                         <button
                           onClick={() => toggleActiveMutation.mutate(user.id)}
-                          className={`rounded-lg p-2 transition-colors ${
-                            user.isActive
-                              ? 'text-green-500 hover:bg-red-50 hover:text-red-600'
-                              : 'text-red-500 hover:bg-green-50 hover:text-green-600'
-                          }`}
                           title={user.isActive ? 'Desactivar usuario' : 'Activar usuario'}
+                          style={{
+                            background: 'transparent', border: 'none', borderRadius: 8,
+                            padding: '7px',
+                            color: user.isActive ? 'rgba(34,197,94,0.8)' : 'rgba(239,68,68,0.8)',
+                            cursor: 'pointer', transition: 'all 0.15s',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = user.isActive ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)';
+                            e.currentTarget.style.color = user.isActive ? '#f87171' : '#4ade80';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = user.isActive ? 'rgba(34,197,94,0.8)' : 'rgba(239,68,68,0.8)';
+                          }}
                         >
-                          {user.isActive ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
+                          {user.isActive ? <ToggleRight size={19} /> : <ToggleLeft size={19} />}
                         </button>
                       </div>
                     </td>
@@ -291,27 +491,43 @@ export default function UsersListPage() {
           </table>
         </div>
 
+        {/* Paginacion */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-100 px-6 py-3">
-            <p className="text-sm text-gray-500">
+          <div
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '14px 20px', borderTop: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
               Pagina {page} de {totalPages}
             </p>
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <button
-                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                onClick={() => setPage((c) => Math.max(1, c - 1))}
                 disabled={page <= 1}
-                className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '6px 14px', fontSize: 13,
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 10, color: 'rgba(255,255,255,0.5)',
+                  opacity: page <= 1 ? 0.3 : 1, cursor: page <= 1 ? 'not-allowed' : 'pointer',
+                }}
               >
-                <ChevronLeft size={16} />
-                Anterior
+                <ChevronLeft size={15} /> Anterior
               </button>
               <button
-                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                onClick={() => setPage((c) => Math.min(totalPages, c + 1))}
                 disabled={page >= totalPages}
-                className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '6px 14px', fontSize: 13,
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 10, color: 'rgba(255,255,255,0.5)',
+                  opacity: page >= totalPages ? 0.3 : 1, cursor: page >= totalPages ? 'not-allowed' : 'pointer',
+                }}
               >
-                Siguiente
-                <ChevronRight size={16} />
+                Siguiente <ChevronRight size={15} />
               </button>
             </div>
           </div>
@@ -363,170 +579,153 @@ type UserFormValues = {
   password?: string;
 };
 
-function UserFormModal({
-  editingUser,
-  roles,
-  isSubmitting,
-  onClose,
-  onSubmitCreate,
-  onSubmitEdit,
-}: UserFormModalProps) {
+function UserFormModal({ editingUser, roles, isSubmitting, onClose, onSubmitCreate, onSubmitEdit }: UserFormModalProps) {
   const isEditing = !!editingUser;
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<UserFormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm<UserFormValues>({
     resolver: zodResolver((isEditing ? editUserSchema : createUserSchema) as any),
     defaultValues: isEditing
-      ? {
-          name: editingUser.name,
-          email: editingUser.email,
-          phone: editingUser.phone || '',
-          roleId: editingUser.role?.id || '',
-        }
-      : {
-          name: '',
-          email: '',
-          phone: '',
-          password: '',
-          roleId: '',
-        },
+      ? { name: editingUser.name, email: editingUser.email, phone: editingUser.phone || '', roleId: editingUser.role?.id || '' }
+      : { name: '', email: '', phone: '', password: '', roleId: '' },
   });
 
   const onSubmit = (data: UserFormValues) => {
     if (isEditing) {
-      onSubmitEdit({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        roleId: data.roleId,
-      });
+      onSubmitEdit({ name: data.name, email: data.email, phone: data.phone, roleId: data.roleId });
       return;
     }
     onSubmitCreate(data as CreateUserFormData);
   };
 
+  const inputStyle = (hasError: boolean): React.CSSProperties => ({
+    width: '100%', height: 48, padding: '0 16px',
+    background: hasError ? 'rgba(248,113,113,0.07)' : 'rgba(255,255,255,0.06)',
+    border: hasError ? '1px solid rgba(248,113,113,0.5)' : '1px solid rgba(255,255,255,0.12)',
+    borderRadius: 12, color: 'rgba(255,255,255,0.88)',
+    fontSize: 14, outline: 'none', boxSizing: 'border-box',
+  });
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block', color: 'rgba(255,255,255,0.6)',
+    fontSize: 13, fontWeight: 600, marginBottom: 8,
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">
-            {isEditing ? 'Editar usuario' : 'Nuevo usuario'}
-          </h2>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)' }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        className="w-full sm:max-w-lg"
+        style={{
+          background: 'linear-gradient(160deg, #131e35 0%, #0f172a 100%)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 24,
+          boxShadow: '0 32px 80px rgba(0,0,0,0.8)',
+          maxHeight: '92dvh', overflowY: 'auto',
+        }}
+      >
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '24px 24px 20px', borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}>
+          <div>
+            <h2 style={{ color: 'white', fontWeight: 700, fontSize: 18, margin: 0 }}>
+              {isEditing ? 'Editar usuario' : 'Nuevo usuario'}
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 3 }}>
+              {isEditing ? 'Modifica los datos del usuario' : 'Completa los datos del nuevo usuario'}
+            </p>
+          </div>
+          <button onClick={onClose} style={{
+            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 10, padding: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center',
+          }}>
+            <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
-              Nombre completo
-            </label>
-            <input
-              type="text"
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
-                errors.name ? 'border-red-300 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="Nombre del usuario"
-              {...register('name')}
-            />
-            {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
-              Correo electronico
-            </label>
-            <input
-              type="email"
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="correo@ejemplo.com"
-              {...register('email')}
-            />
-            {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Telefono</label>
-            <input
-              type="text"
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
-                errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="3000000000"
-              {...register('phone')}
-            />
-            {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>}
-          </div>
-
-          {!isEditing && (
+        <form onSubmit={handleSubmit(onSubmit)} style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                Contrasena inicial
-              </label>
-              <input
-                type="password"
-                className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
-                  errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                }`}
-                placeholder="Minimo 8 caracteres"
-                {...register('password')}
+              <label style={labelStyle}>Nombre completo</label>
+              <input type="text" placeholder="Nombre del usuario" className="placeholder:text-white/20"
+                {...register('name')} style={inputStyle(!!errors.name)}
+                onFocus={(e) => { if (!errors.name) { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)'; } }}
+                onBlur={(e) => { e.target.style.borderColor = errors.name ? 'rgba(248,113,113,0.5)' : 'rgba(255,255,255,0.12)'; e.target.style.boxShadow = 'none'; }}
               />
-              {errors.password && (
-                <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
-              )}
+              {errors.name && <p style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{errors.name.message}</p>}
             </div>
-          )}
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Rol</label>
-            <select
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
-                errors.roleId ? 'border-red-300 bg-red-50' : 'border-gray-300'
-              }`}
-              {...register('roleId')}
-            >
-              <option value="">Seleccione un rol</option>
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name}
-                </option>
-              ))}
-            </select>
-            {errors.roleId && <p className="mt-1 text-xs text-red-600">{errors.roleId.message}</p>}
+            <div>
+              <label style={labelStyle}>Correo electronico</label>
+              <input type="email" placeholder="correo@ejemplo.com" className="placeholder:text-white/20"
+                {...register('email')} style={inputStyle(!!errors.email)}
+                onFocus={(e) => { if (!errors.email) { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)'; } }}
+                onBlur={(e) => { e.target.style.borderColor = errors.email ? 'rgba(248,113,113,0.5)' : 'rgba(255,255,255,0.12)'; e.target.style.boxShadow = 'none'; }}
+              />
+              {errors.email && <p style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{errors.email.message}</p>}
+            </div>
+
+            <div>
+              <label style={labelStyle}>Telefono</label>
+              <input type="text" placeholder="3000000000" className="placeholder:text-white/20"
+                {...register('phone')} style={inputStyle(!!errors.phone)}
+                onFocus={(e) => { if (!errors.phone) { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)'; } }}
+                onBlur={(e) => { e.target.style.borderColor = errors.phone ? 'rgba(248,113,113,0.5)' : 'rgba(255,255,255,0.12)'; e.target.style.boxShadow = 'none'; }}
+              />
+              {errors.phone && <p style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{errors.phone.message}</p>}
+            </div>
+
+            {!isEditing && (
+              <div>
+                <label style={labelStyle}>Contrasena inicial</label>
+                <input type="password" placeholder="Minimo 8 caracteres" className="placeholder:text-white/20"
+                  {...register('password')} style={inputStyle(!!errors.password)}
+                  onFocus={(e) => { if (!errors.password) { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)'; } }}
+                  onBlur={(e) => { e.target.style.borderColor = errors.password ? 'rgba(248,113,113,0.5)' : 'rgba(255,255,255,0.12)'; e.target.style.boxShadow = 'none'; }}
+                />
+                {errors.password && <p style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{errors.password.message}</p>}
+              </div>
+            )}
+
+            <div>
+              <label style={labelStyle}>Rol</label>
+              <select {...register('roleId')} style={{ ...inputStyle(!!errors.roleId), cursor: 'pointer' }}
+                onFocus={(e) => { if (!errors.roleId) { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)'; } }}
+                onBlur={(e) => { e.target.style.borderColor = errors.roleId ? 'rgba(248,113,113,0.5)' : 'rgba(255,255,255,0.12)'; e.target.style.boxShadow = 'none'; }}
+              >
+                <option value="" style={{ background: '#1e293b' }}>Seleccione un rol</option>
+                {roles.map((role) => (
+                  <option key={role.id} value={role.id} style={{ background: '#1e293b' }}>{role.name}</option>
+                ))}
+              </select>
+              {errors.roleId && <p style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{errors.roleId.message}</p>}
+            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-            >
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+            gap: 12, marginTop: 28, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.07)',
+          }}>
+            <button type="button" onClick={onClose} style={{
+              padding: '11px 20px', background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12,
+              color: 'rgba(255,255,255,0.6)', fontSize: 14, fontWeight: 500, cursor: 'pointer',
+            }}>
               Cancelar
             </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Guardando...
-                </>
-              ) : isEditing ? (
-                'Actualizar usuario'
-              ) : (
-                'Crear usuario'
-              )}
+            <button type="submit" disabled={isSubmitting} style={{
+              padding: '11px 24px',
+              background: isSubmitting ? 'rgba(37,99,235,0.5)' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+              border: 'none', borderRadius: 12, color: 'white',
+              fontSize: 14, fontWeight: 600, cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8,
+              boxShadow: isSubmitting ? 'none' : '0 4px 16px rgba(37,99,235,0.4)',
+            }}>
+              {isSubmitting ? <><Loader2 size={16} className="animate-spin" /> Guardando...</> : isEditing ? 'Actualizar usuario' : 'Crear usuario'}
             </button>
           </div>
         </form>
@@ -542,100 +741,104 @@ interface ResetPasswordModalProps {
   onSubmit: (newPassword: string) => void;
 }
 
-function ResetPasswordModal({
-  user,
-  isSubmitting,
-  onClose,
-  onSubmit,
-}: ResetPasswordModalProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ResetPasswordFormData>({
+function ResetPasswordModal({ user, isSubmitting, onClose, onSubmit }: ResetPasswordModalProps) {
+  const { register, handleSubmit, formState: { errors } } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema as any),
-    defaultValues: {
-      newPassword: '',
-      confirmPassword: '',
-    },
+    defaultValues: { newPassword: '', confirmPassword: '' },
+  });
+
+  const inputStyle = (hasError: boolean): React.CSSProperties => ({
+    width: '100%', height: 48, padding: '0 16px',
+    background: hasError ? 'rgba(248,113,113,0.07)' : 'rgba(255,255,255,0.06)',
+    border: hasError ? '1px solid rgba(248,113,113,0.5)' : '1px solid rgba(255,255,255,0.12)',
+    borderRadius: 12, color: 'rgba(255,255,255,0.88)',
+    fontSize: 14, outline: 'none', boxSizing: 'border-box',
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">Restablecer contrasena</h2>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)' }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="w-full sm:max-w-md" style={{
+        background: 'linear-gradient(160deg, #131e35 0%, #0f172a 100%)',
+        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24,
+        boxShadow: '0 32px 80px rgba(0,0,0,0.8)',
+        maxHeight: '92dvh', overflowY: 'auto',
+      }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '24px 24px 20px', borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}>
+          <div>
+            <h2 style={{ color: 'white', fontWeight: 700, fontSize: 18, margin: 0 }}>Restablecer contrasena</h2>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 3 }}>{user.name}</p>
+          </div>
+          <button onClick={onClose} style={{
+            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 10, padding: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center',
+          }}>
+            <X size={18} />
           </button>
         </div>
 
-        <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-          Se actualizara la contrasena de <strong>{user.name}</strong>.
-        </p>
-
-        <form
-          onSubmit={handleSubmit((data) => onSubmit(data.newPassword))}
-          className="space-y-4"
-        >
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
-              Nueva contrasena
-            </label>
-            <input
-              type="password"
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
-                errors.newPassword ? 'border-red-300 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="Minimo 8 caracteres"
-              {...register('newPassword')}
-            />
-            {errors.newPassword && (
-              <p className="mt-1 text-xs text-red-600">{errors.newPassword.message}</p>
-            )}
+        <form onSubmit={handleSubmit((data) => onSubmit(data.newPassword))} style={{ padding: '24px' }}>
+          <div style={{
+            background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',
+            borderRadius: 12, padding: '12px 16px', marginBottom: 24,
+            color: '#fbbf24', fontSize: 13,
+          }}>
+            Se actualizara la contrasena de <strong>{user.name}</strong>. Esta accion no se puede deshacer.
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
-              Confirmar contrasena
-            </label>
-            <input
-              type="password"
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
-                errors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="Repita la contrasena"
-              {...register('confirmPassword')}
-            />
-            {errors.confirmPassword && (
-              <p className="mt-1 text-xs text-red-600">{errors.confirmPassword.message}</p>
-            )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div>
+              <label style={{ display: 'block', color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
+                Nueva contrasena
+              </label>
+              <input type="password" placeholder="Minimo 8 caracteres" className="placeholder:text-white/20"
+                {...register('newPassword')} style={inputStyle(!!errors.newPassword)}
+                onFocus={(e) => { if (!errors.newPassword) { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)'; } }}
+                onBlur={(e) => { e.target.style.borderColor = errors.newPassword ? 'rgba(248,113,113,0.5)' : 'rgba(255,255,255,0.12)'; e.target.style.boxShadow = 'none'; }}
+              />
+              {errors.newPassword && <p style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{errors.newPassword.message}</p>}
+            </div>
+
+            <div>
+              <label style={{ display: 'block', color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
+                Confirmar contrasena
+              </label>
+              <input type="password" placeholder="Repita la contrasena" className="placeholder:text-white/20"
+                {...register('confirmPassword')} style={inputStyle(!!errors.confirmPassword)}
+                onFocus={(e) => { if (!errors.confirmPassword) { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)'; } }}
+                onBlur={(e) => { e.target.style.borderColor = errors.confirmPassword ? 'rgba(248,113,113,0.5)' : 'rgba(255,255,255,0.12)'; e.target.style.boxShadow = 'none'; }}
+              />
+              {errors.confirmPassword && <p style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{errors.confirmPassword.message}</p>}
+            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-            >
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+            gap: 12, marginTop: 28, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.07)',
+          }}>
+            <button type="button" onClick={onClose} style={{
+              padding: '11px 20px', background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12,
+              color: 'rgba(255,255,255,0.6)', fontSize: 14, fontWeight: 500, cursor: 'pointer',
+            }}>
               Cancelar
             </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                'Guardar contrasena'
-              )}
+            <button type="submit" disabled={isSubmitting} style={{
+              padding: '11px 24px',
+              background: isSubmitting ? 'rgba(37,99,235,0.5)' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+              border: 'none', borderRadius: 12, color: 'white',
+              fontSize: 14, fontWeight: 600, cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8,
+              boxShadow: isSubmitting ? 'none' : '0 4px 16px rgba(37,99,235,0.4)',
+            }}>
+              {isSubmitting ? <><Loader2 size={16} className="animate-spin" /> Guardando...</> : 'Guardar contrasena'}
             </button>
           </div>
         </form>
