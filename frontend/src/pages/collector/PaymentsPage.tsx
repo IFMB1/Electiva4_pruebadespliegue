@@ -67,6 +67,16 @@ function formatDate(value?: string | null) {
   }).format(new Date(value));
 }
 
+const thStyle: React.CSSProperties = {
+  color: 'rgba(255,255,255,0.5)',
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+  padding: '14px 20px',
+  whiteSpace: 'nowrap',
+};
+
 export default function PaymentsPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
@@ -77,12 +87,7 @@ export default function PaymentsPage() {
   const loansQuery = useQuery({
     queryKey: ['loans', 'active-for-payment', { search, page, limit }],
     queryFn: () =>
-      loansService.getAll({
-        page,
-        limit,
-        search: search || undefined,
-        status: 'ACTIVE',
-      }),
+      loansService.getAll({ page, limit, search: search || undefined, status: 'ACTIVE' }),
   });
 
   const loans: LoanRow[] = useMemo(
@@ -96,128 +101,137 @@ export default function PaymentsPage() {
     [loans, selectedLoanId]
   );
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<PaymentFormData>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<PaymentFormData>({
     resolver: zodResolver(paymentSchema as any),
-    defaultValues: {
-      amount: 0,
-    },
+    defaultValues: { amount: 0 },
   });
 
   const createPaymentMutation = useMutation({
     mutationFn: async (values: PaymentFormData) => {
-      if (!selectedLoan) {
-        throw new Error('Selecciona un prestamo antes de registrar el cobro');
-      }
-
+      if (!selectedLoan) throw new Error('Selecciona un prestamo antes de registrar el cobro');
       const remaining = toAmount(selectedLoan.remainingAmount);
-      if (values.amount > remaining) {
-        throw new Error('El monto no puede superar el saldo pendiente');
-      }
-
-      return paymentsService.create({
-        loanId: selectedLoan.id,
-        amount: values.amount,
-      });
+      if (values.amount > remaining) throw new Error('El monto no puede superar el saldo pendiente');
+      return paymentsService.create({ loanId: selectedLoan.id, amount: values.amount });
     },
     onSuccess: (response) => {
-      const result = response.data.data as {
-        completed: boolean;
-        appliedAmount: number | string;
-      };
-
+      const result = response.data.data as { completed: boolean; appliedAmount: number | string };
       queryClient.invalidateQueries({ queryKey: ['collector', 'day-overview'] });
       queryClient.invalidateQueries({ queryKey: ['loans'] });
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       queryClient.invalidateQueries({ queryKey: ['clients', 'detail'] });
       reset({ amount: 0 });
-
       if (result.completed) {
-        toast.success(
-          `Cobro aplicado (${formatCurrency(result.appliedAmount)}). Prestamo completado.`
-        );
+        toast.success(`Cobro aplicado (${formatCurrency(result.appliedAmount)}). Prestamo completado.`);
         setSelectedLoanId(null);
       } else {
         toast.success(`Cobro aplicado por ${formatCurrency(result.appliedAmount)}`);
       }
     },
     onError: (error: any) => {
-      const message =
-        error?.message || error?.response?.data?.message || 'No se pudo registrar el cobro';
-      toast.error(message);
+      toast.error(error?.message || error?.response?.data?.message || 'No se pudo registrar el cobro');
     },
   });
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div
+      style={{
+        background: 'radial-gradient(ellipse at 10% 0%, rgba(37,99,235,0.08) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(124,58,237,0.06) 0%, transparent 50%), #0c1220',
+        minHeight: '100dvh',
+        padding: '28px 24px 48px',
+      }}
+    >
+      {/* ── Encabezado ── */}
+      <div style={{ marginBottom: 28, display: 'flex', flexDirection: 'column', gap: 16 }}
+        className="md:flex-row md:items-start md:justify-between"
+      >
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
-            <CreditCard size={28} className="text-blue-600" />
+          <h1 style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            color: 'white', fontWeight: 800, fontSize: 28, letterSpacing: '-0.02em', margin: 0,
+          }}>
+            <CreditCard size={30} color="#3b82f6" />
             Registrar cobro diario
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Busca por nombre o cedula, selecciona el prestamo activo y registra el monto
-            recibido.
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, marginTop: 6 }}>
+            Busca por nombre o cedula, selecciona el prestamo activo y registra el monto recibido.
           </p>
         </div>
         <Link
           to="/cash-register"
-          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-100"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 14, color: 'rgba(255,255,255,0.75)',
+            fontSize: 14, fontWeight: 600, padding: '10px 18px',
+            textDecoration: 'none', transition: 'all 0.2s',
+            whiteSpace: 'nowrap', alignSelf: 'flex-start',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
         >
           <ArrowLeft size={16} />
           Volver a caja
         </Link>
       </div>
 
-      <div className="mb-4">
-        <div className="relative max-w-xl">
-          <Search
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          />
+      {/* ── Buscador ── */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ position: 'relative', maxWidth: 520 }}>
+          <Search size={17} style={{
+            position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
+            color: 'rgba(255,255,255,0.35)',
+          }} />
           <input
             type="text"
             value={search}
-            onChange={(event) => {
-              setSearch(event.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Buscar cliente por nombre o cedula..."
-            className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            className="w-full outline-none placeholder:text-white/20"
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.09)',
+              borderRadius: 14, color: 'rgba(255,255,255,0.9)',
+              fontSize: 14, padding: '11px 16px 11px 46px',
+              transition: 'all 0.2s',
+            }}
+            onFocus={(e) => { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.12)'; }}
+            onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.09)'; e.target.style.boxShadow = 'none'; }}
           />
         </div>
       </div>
 
-      <div className="mb-6 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+      {/* ── Tabla de préstamos ── */}
+      <div style={{
+        marginBottom: 20,
+        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: 24, overflow: 'hidden',
+        boxShadow: '0 20px 60px -12px rgba(0,0,0,0.5)',
+      }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="w-full text-left text-sm" style={{ borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="px-6 py-3 font-semibold text-gray-600">Cliente</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Prestamo</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Saldo pendiente</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Fecha</th>
-                <th className="px-6 py-3 text-right font-semibold text-gray-600">Accion</th>
+              <tr style={{ background: 'rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                <th style={thStyle}>Cliente</th>
+                <th style={thStyle}>Prestamo</th>
+                <th style={thStyle}>Saldo pendiente</th>
+                <th style={thStyle}>Fecha</th>
+                <th style={{ ...thStyle, textAlign: 'right' }}>Accion</th>
               </tr>
             </thead>
             <tbody>
               {loansQuery.isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
-                    <div className="flex items-center justify-center gap-2 text-gray-500">
-                      <Loader2 size={20} className="animate-spin" />
+                  <td colSpan={5} style={{ padding: '48px 20px', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, color: 'rgba(255,255,255,0.35)' }}>
+                      <Loader2 size={18} className="animate-spin" style={{ color: '#3b82f6' }} />
                       Cargando prestamos activos...
                     </div>
                   </td>
                 </tr>
               ) : loans.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} style={{ padding: '48px 20px', textAlign: 'center', color: 'rgba(255,255,255,0.25)', fontSize: 14 }}>
                     No hay prestamos activos para registrar cobros.
                   </td>
                 </tr>
@@ -225,39 +239,52 @@ export default function PaymentsPage() {
                 loans.map((loan) => (
                   <tr
                     key={loan.id}
-                    className="border-b border-gray-50 transition-colors hover:bg-gray-50"
+                    style={{
+                      borderBottom: '1px solid rgba(255,255,255,0.04)',
+                      background: selectedLoanId === loan.id ? 'rgba(37,99,235,0.07)' : 'transparent',
+                      transition: 'background 0.15s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (selectedLoanId !== loan.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedLoanId !== loan.id) e.currentTarget.style.background = 'transparent';
+                    }}
                   >
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900">{loan.client.name}</p>
-                      <p className="text-xs text-gray-500">{loan.client.cedula}</p>
+                    <td style={{ padding: '15px 20px' }}>
+                      <p style={{ color: 'white', fontWeight: 600, fontSize: 14 }}>{loan.client.name}</p>
+                      <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 2 }}>{loan.client.cedula}</p>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-gray-800">{loan.loanNumber}</p>
-                      <p className="text-xs text-gray-500">
+                    <td style={{ padding: '15px 20px' }}>
+                      <p style={{ color: 'rgba(255,255,255,0.85)', fontWeight: 600, fontSize: 14 }}>{loan.loanNumber}</p>
+                      <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 2 }}>
                         Pagado: {formatCurrency(loan.paidAmount)}
                       </p>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-gray-900">
-                      {formatCurrency(loan.remainingAmount)}
+                    <td style={{ padding: '15px 20px' }}>
+                      <span style={{ color: '#4ade80', fontWeight: 700, fontSize: 15 }}>
+                        {formatCurrency(loan.remainingAmount)}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-700">{formatDate(loan.createdAt)}</td>
-                    <td className="px-6 py-4 text-right">
+                    <td style={{ padding: '15px 20px', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
+                      {formatDate(loan.createdAt)}
+                    </td>
+                    <td style={{ padding: '15px 20px', textAlign: 'right' }}>
                       <button
                         onClick={() => setSelectedLoanId(loan.id)}
-                        className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                          selectedLoanId === loan.id
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-blue-600 text-white hover:bg-blue-700'
-                        }`}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 6,
+                          borderRadius: 10, padding: '6px 14px', fontSize: 12, fontWeight: 700,
+                          cursor: 'pointer', transition: 'all 0.15s',
+                          ...(selectedLoanId === loan.id
+                            ? { background: 'rgba(34,197,94,0.15)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' }
+                            : { background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', color: 'white', border: 'none', boxShadow: '0 4px 12px -2px rgba(37,99,235,0.4)' }
+                          ),
+                        }}
                       >
                         {selectedLoanId === loan.id ? (
-                          <>
-                            <CheckCircle2 size={14} />
-                            Seleccionado
-                          </>
-                        ) : (
-                          'Seleccionar'
-                        )}
+                          <><CheckCircle2 size={13} /> Seleccionado</>
+                        ) : 'Seleccionar'}
                       </button>
                     </td>
                   </tr>
@@ -268,122 +295,151 @@ export default function PaymentsPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-100 px-6 py-3">
-            <p className="text-sm text-gray-500">
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '12px 20px', borderTop: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
               Pagina {page} de {totalPages}
             </p>
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <button
-                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                onClick={() => setPage((c) => Math.max(1, c - 1))}
                 disabled={page <= 1}
-                className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', fontSize: 13,
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 10, color: 'rgba(255,255,255,0.5)',
+                  opacity: page <= 1 ? 0.3 : 1, cursor: page <= 1 ? 'not-allowed' : 'pointer',
+                }}
               >
-                <ChevronLeft size={16} />
-                Anterior
+                <ChevronLeft size={15} /> Anterior
               </button>
               <button
-                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                onClick={() => setPage((c) => Math.min(totalPages, c + 1))}
                 disabled={page >= totalPages}
-                className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', fontSize: 13,
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 10, color: 'rgba(255,255,255,0.5)',
+                  opacity: page >= totalPages ? 0.3 : 1, cursor: page >= totalPages ? 'not-allowed' : 'pointer',
+                }}
               >
-                Siguiente
-                <ChevronRight size={16} />
+                Siguiente <ChevronRight size={15} />
               </button>
             </div>
           </div>
         )}
       </div>
 
-      <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-800">Aplicar cobro</h2>
+      {/* ── Aplicar cobro ── */}
+      <div style={{
+        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: 24, padding: '24px',
+        boxShadow: '0 20px 60px -12px rgba(0,0,0,0.5)',
+      }}>
+        <h2 style={{ color: 'rgba(255,255,255,0.85)', fontWeight: 700, fontSize: 17, margin: '0 0 20px' }}>
+          Aplicar cobro
+        </h2>
+
         {!selectedLoan ? (
-          <p className="text-sm text-gray-500">
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
             Selecciona un prestamo activo en la tabla para registrar el pago.
           </p>
         ) : (
           <form onSubmit={handleSubmit((values) => createPaymentMutation.mutate(values))}>
-            <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {/* Detalles del préstamo seleccionado */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3" style={{ marginBottom: 24 }}>
               <DetailItem label="Cliente" value={selectedLoan.client.name} />
               <DetailItem label="Prestamo" value={selectedLoan.loanNumber} />
-              <DetailItem
-                label="Saldo pendiente"
-                value={formatCurrency(selectedLoan.remainingAmount)}
-                highlighted
-              />
+              <DetailItem label="Saldo pendiente" value={formatCurrency(selectedLoan.remainingAmount)} highlighted />
             </div>
 
-            <div className="max-w-sm">
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            {/* Input monto */}
+            <div style={{ maxWidth: 360 }}>
+              <label style={{
+                display: 'block', color: 'rgba(255,255,255,0.6)',
+                fontSize: 13, fontWeight: 600, marginBottom: 8,
+              }}>
                 Monto recibido
               </label>
               <input
                 type="number"
                 min="1"
                 step="1000"
-                {...register('amount', { valueAsNumber: true })}
-                className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
-                  errors.amount ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                }`}
                 placeholder="Ej: 50000"
+                className="placeholder:text-white/20"
+                {...register('amount', { valueAsNumber: true })}
+                style={{
+                  width: '100%', padding: '11px 16px',
+                  background: errors.amount ? 'rgba(248,113,113,0.07)' : 'rgba(255,255,255,0.06)',
+                  border: errors.amount ? '1px solid rgba(248,113,113,0.5)' : '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 12, color: 'rgba(255,255,255,0.9)',
+                  fontSize: 14, outline: 'none', boxSizing: 'border-box',
+                }}
+                onFocus={(e) => { if (!errors.amount) { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)'; } }}
+                onBlur={(e) => { e.target.style.borderColor = errors.amount ? 'rgba(248,113,113,0.5)' : 'rgba(255,255,255,0.12)'; e.target.style.boxShadow = 'none'; }}
               />
-              {errors.amount && (
-                <p className="mt-1 text-xs text-red-600">{errors.amount.message}</p>
-              )}
-              <p className="mt-1 text-xs text-gray-500">
+              {errors.amount && <p style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{errors.amount.message}</p>}
+              <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, marginTop: 6 }}>
                 Maximo permitido: {formatCurrency(selectedLoan.remainingAmount)}
               </p>
             </div>
 
-            <div className="mt-5 flex items-center gap-3">
+            {/* Botones */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24 }}>
               <button
                 type="submit"
                 disabled={createPaymentMutation.isPending}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '11px 24px',
+                  background: createPaymentMutation.isPending ? 'rgba(37,99,235,0.5)' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  border: 'none', borderRadius: 12, color: 'white',
+                  fontSize: 14, fontWeight: 700,
+                  cursor: createPaymentMutation.isPending ? 'not-allowed' : 'pointer',
+                  boxShadow: createPaymentMutation.isPending ? 'none' : '0 4px 16px rgba(37,99,235,0.4)',
+                }}
               >
-                {createPaymentMutation.isPending ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" />
-                    Registrando...
-                  </>
-                ) : (
-                  'Guardar cobro'
-                )}
+                {createPaymentMutation.isPending
+                  ? <><Loader2 size={16} className="animate-spin" /> Registrando...</>
+                  : 'Guardar cobro'}
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setSelectedLoanId(null);
-                  reset({ amount: 0 });
+                onClick={() => { setSelectedLoanId(null); reset({ amount: 0 }); }}
+                style={{
+                  padding: '11px 20px',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 12, color: 'rgba(255,255,255,0.6)',
+                  fontSize: 14, fontWeight: 500, cursor: 'pointer',
                 }}
-                className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
               >
                 Limpiar
               </button>
             </div>
           </form>
         )}
-      </section>
+      </div>
     </div>
   );
 }
 
-function DetailItem({
-  label,
-  value,
-  highlighted = false,
-}: {
-  label: string;
-  value: string;
-  highlighted?: boolean;
-}) {
+/* ── DetailItem ── */
+function DetailItem({ label, value, highlighted = false }: { label: string; value: string; highlighted?: boolean }) {
   return (
-    <div
-      className={`rounded-lg border p-3 ${
-        highlighted ? 'border-blue-200 bg-blue-50' : 'border-gray-200 bg-gray-50'
-      }`}
-    >
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</p>
-      <p className={`text-sm font-semibold ${highlighted ? 'text-blue-700' : 'text-gray-900'}`}>
+    <div style={{
+      background: highlighted ? 'rgba(37,99,235,0.1)' : 'rgba(255,255,255,0.04)',
+      border: highlighted ? '1px solid rgba(59,130,246,0.25)' : '1px solid rgba(255,255,255,0.08)',
+      borderRadius: 14, padding: '12px 16px',
+    }}>
+      <p style={{
+        color: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700,
+        textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6,
+      }}>
+        {label}
+      </p>
+      <p style={{ color: highlighted ? '#93c5fd' : 'rgba(255,255,255,0.85)', fontWeight: 700, fontSize: 15 }}>
         {value}
       </p>
     </div>

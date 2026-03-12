@@ -53,13 +53,34 @@ function formatDate(value?: string | null) {
   }).format(new Date(value));
 }
 
-function statusClass(status: string) {
-  const normalized = status.toUpperCase();
-  if (normalized === 'ACTIVE') return 'bg-green-100 text-green-700';
-  if (normalized === 'COMPLETED') return 'bg-blue-100 text-blue-700';
-  if (normalized === 'RENEWED') return 'bg-purple-100 text-purple-700';
-  return 'bg-gray-100 text-gray-600';
+function statusStyle(status: string): React.CSSProperties {
+  const s = status.toUpperCase();
+  if (s === 'ACTIVE')    return { background: 'rgba(34,197,94,0.1)',   color: '#4ade80', border: '1px solid rgba(34,197,94,0.25)'   };
+  if (s === 'COMPLETED') return { background: 'rgba(37,99,235,0.12)',  color: '#60a5fa', border: '1px solid rgba(59,130,246,0.25)'  };
+  if (s === 'RENEWED')   return { background: 'rgba(124,58,237,0.12)', color: '#a78bfa', border: '1px solid rgba(124,58,237,0.25)' };
+  if (s === 'DEFAULTED') return { background: 'rgba(239,68,68,0.1)',   color: '#f87171', border: '1px solid rgba(239,68,68,0.25)'  };
+  return { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' };
 }
+
+function statusLabel(status: string) {
+  const s = status.toUpperCase();
+  if (s === 'ACTIVE')    return 'Activo';
+  if (s === 'COMPLETED') return 'Completado';
+  if (s === 'RENEWED')   return 'Renovado';
+  if (s === 'DEFAULTED') return 'En mora';
+  if (s === 'CANCELLED') return 'Cancelado';
+  return status;
+}
+
+const thStyle: React.CSSProperties = {
+  color: 'rgba(255,255,255,0.5)',
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+  padding: '14px 20px',
+  whiteSpace: 'nowrap',
+};
 
 export default function LoansPage() {
   const [page, setPage] = useState(1);
@@ -84,74 +105,151 @@ export default function LoansPage() {
   const total = pagination?.total || loans.length;
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
-          <WalletCards size={28} className="text-blue-600" />
+    <div
+      style={{
+        background:
+          'radial-gradient(ellipse at 10% 0%, rgba(37,99,235,0.08) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(124,58,237,0.06) 0%, transparent 50%), #0c1220',
+        minHeight: '100dvh',
+        padding: '28px 24px 48px',
+      }}
+    >
+      {/* ── Encabezado ── */}
+      <div style={{ marginBottom: 28 }}>
+        <h1
+          style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            color: 'white', fontWeight: 800, fontSize: 28,
+            letterSpacing: '-0.02em', margin: 0,
+          }}
+        >
+          <WalletCards size={30} color="#3b82f6" />
           Mis prestamos
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, marginTop: 6 }}>
           Seguimiento de prestamos creados ({total} registros)
         </p>
       </div>
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row">
-        <div className="relative max-w-md flex-1">
+      {/* ── Filtros ── */}
+      <div
+        className="flex flex-col gap-3 sm:flex-row"
+        style={{ marginBottom: 20 }}
+      >
+        {/* Buscador */}
+        <div style={{ position: 'relative', maxWidth: 480, flex: 1 }}>
           <Search
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={17}
+            style={{
+              position: 'absolute', left: 16, top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'rgba(255,255,255,0.35)',
+            }}
           />
           <input
             type="text"
             value={search}
-            onChange={(event) => {
-              setSearch(event.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Buscar por cliente o cedula..."
-            className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            className="w-full outline-none placeholder:text-white/20"
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.09)',
+              borderRadius: 14, color: 'rgba(255,255,255,0.9)',
+              fontSize: 14, padding: '11px 16px 11px 46px',
+              transition: 'all 0.2s',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#3b82f6';
+              e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.12)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'rgba(255,255,255,0.09)';
+              e.target.style.boxShadow = 'none';
+            }}
           />
         </div>
+
+        {/* Select estado */}
         <select
           value={status}
-          onChange={(event) => {
-            setStatus(event.target.value as 'ACTIVE' | 'COMPLETED' | 'RENEWED' | '');
+          onChange={(e) => {
+            setStatus(e.target.value as 'ACTIVE' | 'COMPLETED' | 'RENEWED' | '');
             setPage(1);
           }}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+          style={{
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 14, color: 'rgba(255,255,255,0.85)',
+            fontSize: 14, padding: '11px 16px',
+            outline: 'none', cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = '#3b82f6';
+            e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.12)';
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = 'rgba(255,255,255,0.09)';
+            e.target.style.boxShadow = 'none';
+          }}
         >
-          <option value="">Todos los estados</option>
-          <option value="ACTIVE">Activos</option>
-          <option value="COMPLETED">Completados</option>
-          <option value="RENEWED">Renovados</option>
+          <option value="" style={{ background: '#1e293b' }}>Todos los estados</option>
+          <option value="ACTIVE" style={{ background: '#1e293b' }}>Activos</option>
+          <option value="COMPLETED" style={{ background: '#1e293b' }}>Completados</option>
+          <option value="RENEWED" style={{ background: '#1e293b' }}>Renovados</option>
         </select>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+      {/* ── Tabla ── */}
+      <div
+        style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 24, overflow: 'hidden',
+          boxShadow: '0 20px 60px -12px rgba(0,0,0,0.5)',
+        }}
+      >
+        <div style={{ overflowX: 'auto' }}>
+          <table className="w-full text-left text-sm" style={{ borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="px-6 py-3 font-semibold text-gray-600">Prestamo</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Cliente</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Estado</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Saldo</th>
-                <th className="px-6 py-3 font-semibold text-gray-600">Fecha</th>
+              <tr
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  borderBottom: '1px solid rgba(255,255,255,0.07)',
+                }}
+              >
+                <th style={thStyle}>Prestamo</th>
+                <th style={thStyle}>Cliente</th>
+                <th style={thStyle}>Estado</th>
+                <th style={thStyle}>Saldo</th>
+                <th style={thStyle}>Fecha</th>
               </tr>
             </thead>
             <tbody>
               {loansQuery.isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
-                    <div className="flex items-center justify-center gap-2 text-gray-500">
-                      <Loader2 size={20} className="animate-spin" />
+                  <td colSpan={5} style={{ padding: '48px 20px', textAlign: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', gap: 8,
+                        color: 'rgba(255,255,255,0.35)',
+                      }}
+                    >
+                      <Loader2 size={18} className="animate-spin" style={{ color: '#3b82f6' }} />
                       Cargando prestamos...
                     </div>
                   </td>
                 </tr>
               ) : loans.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td
+                    colSpan={5}
+                    style={{
+                      padding: '48px 20px', textAlign: 'center',
+                      color: 'rgba(255,255,255,0.25)', fontSize: 14,
+                    }}
+                  >
                     No hay prestamos para mostrar
                   </td>
                 </tr>
@@ -159,36 +257,66 @@ export default function LoansPage() {
                 loans.map((loan) => (
                   <tr
                     key={loan.id}
-                    className="border-b border-gray-50 transition-colors hover:bg-gray-50"
+                    style={{
+                      borderBottom: '1px solid rgba(255,255,255,0.04)',
+                      transition: 'background 0.15s',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                   >
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900">{loan.loanNumber}</p>
-                      <p className="text-xs text-gray-500">
+                    {/* Préstamo */}
+                    <td style={{ padding: '15px 20px' }}>
+                      <p style={{ color: 'rgba(255,255,255,0.88)', fontWeight: 600, fontSize: 14 }}>
+                        {loan.loanNumber}
+                      </p>
+                      <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 2 }}>
                         Total: {formatCurrency(loan.totalAmount)}
                       </p>
                     </td>
-                    <td className="px-6 py-4">
+
+                    {/* Cliente */}
+                    <td style={{ padding: '15px 20px' }}>
                       <Link
                         to={`/clients/${loan.client.id}`}
-                        className="font-medium text-blue-700 hover:text-blue-800"
+                        style={{
+                          color: '#93c5fd', fontWeight: 600, fontSize: 14,
+                          textDecoration: 'none', transition: 'color 0.15s',
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = '#60a5fa'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = '#93c5fd'; }}
                       >
                         {loan.client.name}
                       </Link>
-                      <p className="text-xs text-gray-500">{loan.client.cedula}</p>
+                      <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 2 }}>
+                        {loan.client.cedula}
+                      </p>
                     </td>
-                    <td className="px-6 py-4">
+
+                    {/* Estado */}
+                    <td style={{ padding: '15px 20px' }}>
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusClass(
-                          loan.status
-                        )}`}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center',
+                          borderRadius: 999, padding: '3px 10px',
+                          fontSize: 11, fontWeight: 700,
+                          ...statusStyle(loan.status),
+                        }}
                       >
-                        {loan.status}
+                        {statusLabel(loan.status)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-medium text-gray-900">
-                      {formatCurrency(loan.remainingAmount)}
+
+                    {/* Saldo */}
+                    <td style={{ padding: '15px 20px' }}>
+                      <span style={{ color: '#4ade80', fontWeight: 700, fontSize: 15 }}>
+                        {formatCurrency(loan.remainingAmount)}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-700">{formatDate(loan.createdAt)}</td>
+
+                    {/* Fecha */}
+                    <td style={{ padding: '15px 20px', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
+                      {formatDate(loan.createdAt)}
+                    </td>
                   </tr>
                 ))
               )}
@@ -196,27 +324,47 @@ export default function LoansPage() {
           </table>
         </div>
 
+        {/* ── Paginación ── */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-100 px-6 py-3">
-            <p className="text-sm text-gray-500">
+          <div
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '12px 20px', borderTop: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
               Pagina {page} de {totalPages}
             </p>
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <button
-                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                onClick={() => setPage((c) => Math.max(1, c - 1))}
                 disabled={page <= 1}
-                className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '6px 14px', fontSize: 13,
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 10, color: 'rgba(255,255,255,0.5)',
+                  opacity: page <= 1 ? 0.3 : 1,
+                  cursor: page <= 1 ? 'not-allowed' : 'pointer',
+                }}
               >
-                <ChevronLeft size={16} />
-                Anterior
+                <ChevronLeft size={15} /> Anterior
               </button>
               <button
-                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                onClick={() => setPage((c) => Math.min(totalPages, c + 1))}
                 disabled={page >= totalPages}
-                className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '6px 14px', fontSize: 13,
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 10, color: 'rgba(255,255,255,0.5)',
+                  opacity: page >= totalPages ? 0.3 : 1,
+                  cursor: page >= totalPages ? 'not-allowed' : 'pointer',
+                }}
               >
-                Siguiente
-                <ChevronRight size={16} />
+                Siguiente <ChevronRight size={15} />
               </button>
             </div>
           </div>
