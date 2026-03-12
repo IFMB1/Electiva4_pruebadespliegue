@@ -288,15 +288,30 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Reportes</h1>
-        <p className="mt-1 text-sm text-gray-500">
+    <div
+      style={{
+        background:
+          'radial-gradient(ellipse at 10% 0%, rgba(37,99,235,0.08) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(124,58,237,0.06) 0%, transparent 50%), #0c1220',
+        minHeight: '100dvh',
+        padding: '20px 16px 32px',
+      }}
+    >
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ color: 'white', fontWeight: 700, fontSize: '22px' }}>Reportes</h1>
+        <p style={{ marginTop: 4, color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
           Genera y exporta reportes de cobranza, cartera, movimientos y cierres.
         </p>
       </div>
 
-      <section className="mb-6 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+      <section
+        style={{
+          marginBottom: 24,
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 20,
+          padding: 16,
+        }}
+      >
         <div className="mb-4 flex flex-wrap gap-2">
           <TabButton
             label="Resumen cobranza"
@@ -322,7 +337,17 @@ export default function ReportsPage() {
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <label
+              style={{
+                display: 'block',
+                marginBottom: 6,
+                color: 'rgba(255,255,255,0.35)',
+                fontSize: 12,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
               Cobrador
             </label>
             <select
@@ -330,7 +355,23 @@ export default function ReportsPage() {
               onChange={(event) =>
                 setFilters((current) => ({ ...current, collectorId: event.target.value }))
               }
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              style={{
+                width: '100%',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 12,
+                color: 'rgba(255,255,255,0.85)',
+                padding: '10px 14px',
+                outline: 'none',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#3b82f6';
+                e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                e.target.style.boxShadow = 'none';
+              }}
             >
               <option value="">Todos</option>
               {collectors.map((collector) => (
@@ -342,7 +383,17 @@ export default function ReportsPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <label
+              style={{
+                display: 'block',
+                marginBottom: 6,
+                color: 'rgba(255,255,255,0.35)',
+                fontSize: 12,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
               Fecha desde
             </label>
             <input
@@ -352,12 +403,40 @@ export default function ReportsPage() {
                 setFilters((current) => ({ ...current, from: event.target.value }))
               }
               disabled={activeTab === 'portfolio'}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              style={{
+                width: '100%',
+                background: activeTab === 'portfolio' ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 12,
+                color: activeTab === 'portfolio' ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.85)',
+                padding: '10px 14px',
+                outline: 'none',
+              }}
+              onFocus={(e) => {
+                if (activeTab !== 'portfolio') {
+                  e.target.style.borderColor = '#3b82f6';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)';
+                }
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <label
+              style={{
+                display: 'block',
+                marginBottom: 6,
+                color: 'rgba(255,255,255,0.35)',
+                fontSize: 12,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
               Fecha hasta
             </label>
             <input
@@ -367,14 +446,54 @@ export default function ReportsPage() {
                 setFilters((current) => ({ ...current, to: event.target.value }))
               }
               disabled={activeTab === 'portfolio'}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              style={{
+                width: '100%',
+                background: activeTab === 'portfolio' ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 12,
+                color: activeTab === 'portfolio' ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.85)',
+                padding: '10px 14px',
+                outline: 'none',
+              }}
+              onFocus={(e) => {
+                if (activeTab !== 'portfolio') {
+                  e.target.style.borderColor = '#3b82f6';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.15)';
+                }
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
 
           <div className="flex items-end gap-2">
             <button
               onClick={handleApplyFilters}
-              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                background: '#2563eb',
+                color: 'white',
+                padding: '10px 16px',
+                fontSize: 14,
+                fontWeight: 600,
+                borderRadius: 12,
+                border: 'none',
+                boxShadow: '0 4px 16px rgba(37,99,235,0.35)',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 6px 24px rgba(37,99,235,0.55)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,99,235,0.35)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
             >
               <Filter size={16} />
               Aplicar
@@ -382,8 +501,19 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-4">
-          <p className="text-xs text-gray-500">
+        <div
+          style={{
+            marginTop: 16,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            paddingTop: 16,
+          }}
+        >
+          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>
             Filtros activos: {selectedCollectorName}
             {activeTab !== 'portfolio' &&
               ` | ${appliedFilters.from || '-'} a ${appliedFilters.to || '-'}`}
@@ -392,7 +522,29 @@ export default function ReportsPage() {
             <button
               onClick={handleExportExcel}
               disabled={!reportQuery.data || reportQuery.isLoading}
-              className="inline-flex items-center gap-2 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                background: 'rgba(34,197,94,0.08)',
+                border: '1px solid rgba(34,197,94,0.2)',
+                color: '#4ade80',
+                padding: '8px 16px',
+                fontSize: 14,
+                fontWeight: 600,
+                borderRadius: 10,
+                cursor: reportQuery.data && !reportQuery.isLoading ? 'pointer' : 'not-allowed',
+                opacity: reportQuery.data && !reportQuery.isLoading ? 1 : 0.6,
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                if (reportQuery.data && !reportQuery.isLoading) {
+                  e.currentTarget.style.background = 'rgba(34,197,94,0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(34,197,94,0.08)';
+              }}
             >
               <FileSpreadsheet size={16} />
               Excel
@@ -400,7 +552,29 @@ export default function ReportsPage() {
             <button
               onClick={handleExportPdf}
               disabled={!reportQuery.data || reportQuery.isLoading}
-              className="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                background: 'rgba(239,68,68,0.08)',
+                border: '1px solid rgba(239,68,68,0.2)',
+                color: '#f87171',
+                padding: '8px 16px',
+                fontSize: 14,
+                fontWeight: 600,
+                borderRadius: 10,
+                cursor: reportQuery.data && !reportQuery.isLoading ? 'pointer' : 'not-allowed',
+                opacity: reportQuery.data && !reportQuery.isLoading ? 1 : 0.6,
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                if (reportQuery.data && !reportQuery.isLoading) {
+                  e.currentTarget.style.background = 'rgba(239,68,68,0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(239,68,68,0.08)';
+              }}
             >
               <Download size={16} />
               PDF
@@ -409,10 +583,25 @@ export default function ReportsPage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-gray-100 bg-white shadow-sm">
+      <section
+        style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 20,
+          overflow: 'hidden',
+        }}
+      >
         {reportQuery.isLoading ? (
-          <div className="flex h-56 items-center justify-center text-gray-600">
-            <Loader2 size={20} className="mr-2 animate-spin" />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 224,
+              color: 'rgba(255,255,255,0.4)',
+            }}
+          >
+            <Loader2 size={20} className="animate-spin" style={{ marginRight: 8, color: '#3b82f6' }} />
             Generando reporte...
           </div>
         ) : reportQuery.data?.type === 'collection' ? (
@@ -424,8 +613,14 @@ export default function ReportsPage() {
         ) : reportQuery.data?.type === 'closures' ? (
           <CashClosuresView report={reportQuery.data.data} />
         ) : (
-          <div className="px-6 py-16 text-center text-gray-500">
-            <CalendarRange className="mx-auto mb-2 h-6 w-6" />
+          <div
+            style={{
+              padding: '64px 24px',
+              textAlign: 'center',
+              color: 'rgba(255,255,255,0.25)',
+            }}
+          >
+            <CalendarRange style={{ margin: '0 auto 8px', display: 'block', width: 24, height: 24 }} />
             Sin datos para mostrar.
           </div>
         )}
@@ -446,11 +641,42 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+      style={
         active
-          ? 'bg-blue-600 text-white'
-          : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-100'
-      }`}
+          ? {
+              background: 'rgba(37,99,235,0.2)',
+              border: '1px solid rgba(59,130,246,0.3)',
+              color: '#93c5fd',
+              borderRadius: 10,
+              padding: '8px 14px',
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }
+          : {
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 10,
+              padding: '8px 14px',
+              color: 'rgba(255,255,255,0.45)',
+              fontSize: 13,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }
+      }
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+          e.currentTarget.style.color = 'rgba(255,255,255,0.75)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+          e.currentTarget.style.color = 'rgba(255,255,255,0.45)';
+        }
+      }}
     >
       {label}
     </button>
@@ -460,7 +686,13 @@ function TabButton({
 function CollectionSummaryView({ report }: { report: CollectionSummaryReport }) {
   return (
     <div>
-      <div className="grid grid-cols-1 gap-3 border-b border-gray-100 px-5 py-4 sm:grid-cols-3">
+      <div
+        className="grid grid-cols-1 gap-3 sm:grid-cols-3"
+        style={{
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          padding: '16px 20px',
+        }}
+      >
         <Metric label="Cobrado total" value={formatCurrency(report.totals.totalCollected)} />
         <Metric label="Gastos total" value={formatCurrency(report.totals.totalExpenses)} />
         <Metric label="Neto total" value={formatCurrency(report.totals.net)} />
@@ -468,35 +700,43 @@ function CollectionSummaryView({ report }: { report: CollectionSummaryReport }) 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="px-5 py-3 font-semibold text-gray-600">Cobrador</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Telefono</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Cobrado</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Gastos</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Neto</th>
+            <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Cobrador</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Telefono</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Cobrado</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Gastos</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Neto</th>
             </tr>
           </thead>
           <tbody>
             {report.rows.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-gray-500">
+                <td colSpan={5} style={{ padding: '32px 20px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>
                   Sin resultados para este filtro.
                 </td>
               </tr>
             ) : (
               report.rows.map((row) => (
-                <tr key={row.collectorId} className="border-b border-gray-50">
-                  <td className="px-5 py-3">
-                    <p className="font-semibold text-gray-900">{row.collectorName}</p>
+                <tr
+                  key={row.collectorId}
+                  style={{
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <td style={{ padding: '12px 20px' }}>
+                    <p style={{ fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>{row.collectorName}</p>
                   </td>
-                  <td className="px-5 py-3 text-gray-700">{row.collectorPhone}</td>
-                  <td className="px-5 py-3 text-green-700">
-                    {formatCurrency(row.totalCollected)}
-                  </td>
-                  <td className="px-5 py-3 text-red-700">{formatCurrency(row.totalExpenses)}</td>
-                  <td className="px-5 py-3 font-semibold text-gray-900">
-                    {formatCurrency(row.net)}
-                  </td>
+                  <td style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{row.collectorPhone}</td>
+                  <td style={{ padding: '12px 20px', color: '#4ade80' }}>{formatCurrency(row.totalCollected)}</td>
+                  <td style={{ padding: '12px 20px', color: '#f87171' }}>{formatCurrency(row.totalExpenses)}</td>
+                  <td style={{ padding: '12px 20px', fontWeight: 600, color: 'white' }}>{formatCurrency(row.net)}</td>
                 </tr>
               ))
             )}
@@ -510,7 +750,13 @@ function CollectionSummaryView({ report }: { report: CollectionSummaryReport }) 
 function PortfolioStatusView({ report }: { report: PortfolioStatusReport }) {
   return (
     <div>
-      <div className="grid grid-cols-1 gap-3 border-b border-gray-100 px-5 py-4 sm:grid-cols-4">
+      <div
+        className="grid grid-cols-1 gap-3 sm:grid-cols-4"
+        style={{
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          padding: '16px 20px',
+        }}
+      >
         <Metric label="Prestamos activos" value={String(report.totals.activeLoans)} />
         <Metric label="Capital colocado" value={formatCurrency(report.totals.totalPrincipal)} />
         <Metric label="Total pagado" value={formatCurrency(report.totals.totalPaid)} />
@@ -519,39 +765,49 @@ function PortfolioStatusView({ report }: { report: PortfolioStatusReport }) {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="px-5 py-3 font-semibold text-gray-600">Prestamo</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Cliente</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Cobrador</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Original</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Pagado</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Pendiente</th>
+            <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Prestamo</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Cliente</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Cobrador</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Original</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Pagado</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Pendiente</th>
             </tr>
           </thead>
           <tbody>
             {report.rows.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-5 py-12 text-center text-gray-500">
+                <td colSpan={6} style={{ padding: '32px 20px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>
                   Sin prestamos activos para este filtro.
                 </td>
               </tr>
             ) : (
               report.rows.map((row) => (
-                <tr key={row.loanId} className="border-b border-gray-50">
-                  <td className="px-5 py-3">
-                    <p className="font-semibold text-gray-900">{row.loanNumber}</p>
-                    <p className="text-xs text-gray-500">Inicio: {formatDate(row.disbursedAt)}</p>
+                <tr
+                  key={row.loanId}
+                  style={{
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <td style={{ padding: '12px 20px' }}>
+                    <p style={{ fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>{row.loanNumber}</p>
+                    <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Inicio: {formatDate(row.disbursedAt)}</p>
                   </td>
-                  <td className="px-5 py-3">
-                    <p className="text-gray-900">{row.clientName}</p>
-                    <p className="text-xs text-gray-500">{row.clientCedula}</p>
+                  <td style={{ padding: '12px 20px' }}>
+                    <p style={{ color: 'rgba(255,255,255,0.8)' }}>{row.clientName}</p>
+                    <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>{row.clientCedula}</p>
                   </td>
-                  <td className="px-5 py-3 text-gray-700">{row.collectorName}</td>
-                  <td className="px-5 py-3 text-gray-700">{formatCurrency(row.principalAmount)}</td>
-                  <td className="px-5 py-3 text-green-700">{formatCurrency(row.paidAmount)}</td>
-                  <td className="px-5 py-3 font-semibold text-gray-900">
-                    {formatCurrency(row.remainingAmount)}
-                  </td>
+                  <td style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{row.collectorName}</td>
+                  <td style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{formatCurrency(row.principalAmount)}</td>
+                  <td style={{ padding: '12px 20px', color: '#4ade80' }}>{formatCurrency(row.paidAmount)}</td>
+                  <td style={{ padding: '12px 20px', fontWeight: 600, color: 'white' }}>{formatCurrency(row.remainingAmount)}</td>
                 </tr>
               ))
             )}
@@ -565,7 +821,13 @@ function PortfolioStatusView({ report }: { report: PortfolioStatusReport }) {
 function MovementsView({ report }: { report: MovementHistoryReport }) {
   return (
     <div>
-      <div className="grid grid-cols-1 gap-3 border-b border-gray-100 px-5 py-4 sm:grid-cols-4">
+      <div
+        className="grid grid-cols-1 gap-3 sm:grid-cols-4"
+        style={{
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          padding: '16px 20px',
+        }}
+      >
         <Metric label="Movimientos" value={String(report.totals.movementsCount)} />
         <Metric label="Cobrado" value={formatCurrency(report.totals.totalCollected)} />
         <Metric label="Gastos" value={formatCurrency(report.totals.totalExpenses)} />
@@ -574,46 +836,61 @@ function MovementsView({ report }: { report: MovementHistoryReport }) {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="px-5 py-3 font-semibold text-gray-600">Fecha y hora</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Tipo</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Cobrador</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Detalle</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Monto</th>
+            <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Fecha y hora</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Tipo</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Cobrador</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Detalle</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Monto</th>
             </tr>
           </thead>
           <tbody>
             {report.rows.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-gray-500">
+                <td colSpan={5} style={{ padding: '32px 20px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>
                   Sin movimientos para este rango.
                 </td>
               </tr>
             ) : (
               report.rows.map((row) => (
-                <tr key={row.id} className="border-b border-gray-50">
-                  <td className="px-5 py-3 text-gray-700">{formatDateTime(row.timestamp)}</td>
-                  <td className="px-5 py-3">
+                <tr
+                  key={row.id}
+                  style={{
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <td style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{formatDateTime(row.timestamp)}</td>
+                  <td style={{ padding: '12px 20px' }}>
                     <span
-                      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        row.type === 'PAYMENT'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}
+                      style={{
+                        display: 'inline-flex',
+                        borderRadius: 9999,
+                        padding: '2px 10px',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        ...(row.type === 'PAYMENT'
+                          ? { background: 'rgba(34,197,94,0.1)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.2)' }
+                          : { background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }),
+                      }}
                     >
                       {row.type === 'PAYMENT' ? 'Cobro' : 'Gasto'}
                     </span>
                   </td>
-                  <td className="px-5 py-3 text-gray-700">{row.collectorName}</td>
-                  <td className="px-5 py-3">
-                    <p className="text-gray-900">{row.description || '-'}</p>
-                    <p className="text-xs text-gray-500">
+                  <td style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{row.collectorName}</td>
+                  <td style={{ padding: '12px 20px' }}>
+                    <p style={{ color: 'rgba(255,255,255,0.8)' }}>{row.description || '-'}</p>
+                    <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>
                       {row.clientName ? `${row.clientName} / ${row.loanNumber}` : row.category || '-'}
                     </p>
                   </td>
-                  <td className="px-5 py-3 font-semibold text-gray-900">
-                    {formatCurrency(row.amount)}
-                  </td>
+                  <td style={{ padding: '12px 20px', fontWeight: 600, color: 'white' }}>{formatCurrency(row.amount)}</td>
                 </tr>
               ))
             )}
@@ -627,7 +904,13 @@ function MovementsView({ report }: { report: MovementHistoryReport }) {
 function CashClosuresView({ report }: { report: CashClosuresReport }) {
   return (
     <div>
-      <div className="grid grid-cols-1 gap-3 border-b border-gray-100 px-5 py-4 sm:grid-cols-4">
+      <div
+        className="grid grid-cols-1 gap-3 sm:grid-cols-4"
+        style={{
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          padding: '16px 20px',
+        }}
+      >
         <Metric label="Cierres" value={String(report.totals.closuresCount)} />
         <Metric label="Manuales" value={String(report.totals.manualClosures)} />
         <Metric label="Automaticos" value={String(report.totals.autoClosures)} />
@@ -636,47 +919,60 @@ function CashClosuresView({ report }: { report: CashClosuresReport }) {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="px-5 py-3 font-semibold text-gray-600">Fecha negocio</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Cobrador</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Tipo cierre</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Cobrado</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Gastos</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Neto</th>
-              <th className="px-5 py-3 font-semibold text-gray-600">Cerrado en</th>
+            <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Fecha negocio</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Cobrador</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Tipo cierre</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Cobrado</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Gastos</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Neto</th>
+              <th style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 10, letterSpacing: '0.08em' }}>Cerrado en</th>
             </tr>
           </thead>
           <tbody>
             {report.rows.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-5 py-12 text-center text-gray-500">
+                <td colSpan={7} style={{ padding: '32px 20px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>
                   Sin cierres en este periodo.
                 </td>
               </tr>
             ) : (
               report.rows.map((row) => (
-                <tr key={row.shiftId} className="border-b border-gray-50">
-                  <td className="px-5 py-3 text-gray-700">{row.businessDate}</td>
-                  <td className="px-5 py-3 text-gray-900">{row.collectorName}</td>
-                  <td className="px-5 py-3">
+                <tr
+                  key={row.shiftId}
+                  style={{
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <td style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{row.businessDate}</td>
+                  <td style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.8)' }}>{row.collectorName}</td>
+                  <td style={{ padding: '12px 20px' }}>
                     <span
-                      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        row.isAutoClosed
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'bg-blue-100 text-blue-700'
-                      }`}
+                      style={{
+                        display: 'inline-flex',
+                        borderRadius: 9999,
+                        padding: '2px 10px',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        ...(row.isAutoClosed
+                          ? { background: 'rgba(245,158,11,0.1)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.2)' }
+                          : { background: 'rgba(34,197,94,0.1)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.2)' }),
+                      }}
                     >
                       {row.isAutoClosed ? 'Automatico' : 'Manual'}
                     </span>
                   </td>
-                  <td className="px-5 py-3 text-green-700">
-                    {formatCurrency(row.totalCollected)}
-                  </td>
-                  <td className="px-5 py-3 text-red-700">{formatCurrency(row.totalExpenses)}</td>
-                  <td className="px-5 py-3 font-semibold text-gray-900">
-                    {formatCurrency(row.net)}
-                  </td>
-                  <td className="px-5 py-3 text-gray-700">{formatDateTime(row.closedAt)}</td>
+                  <td style={{ padding: '12px 20px', color: '#4ade80' }}>{formatCurrency(row.totalCollected)}</td>
+                  <td style={{ padding: '12px 20px', color: '#f87171' }}>{formatCurrency(row.totalExpenses)}</td>
+                  <td style={{ padding: '12px 20px', fontWeight: 600, color: 'white' }}>{formatCurrency(row.net)}</td>
+                  <td style={{ padding: '12px 20px', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{formatDateTime(row.closedAt)}</td>
                 </tr>
               ))
             )}
@@ -689,9 +985,27 @@ function CashClosuresView({ report }: { report: CashClosuresReport }) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="text-sm font-semibold text-gray-900">{value}</p>
+    <div
+      style={{
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 14,
+        padding: '12px 14px',
+      }}
+    >
+      <p
+        style={{
+          marginBottom: 4,
+          color: 'rgba(255,255,255,0.35)',
+          fontSize: 10,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}
+      >
+        {label}
+      </p>
+      <p style={{ color: 'white', fontWeight: 700, fontSize: 14 }}>{value}</p>
     </div>
   );
 }
